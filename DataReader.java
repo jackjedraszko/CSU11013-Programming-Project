@@ -7,7 +7,7 @@ public class DataReader
   {
     public static void main(String[] args)
     {
-      String fileName = "flights(2k)(1) (1).csv";
+      String fileName = "flights.csv";
       String line = "";
 
         try
