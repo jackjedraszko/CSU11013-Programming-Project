@@ -33,8 +33,6 @@ class DataReaders{
 
   String fileName = "flights.csv";
   String line = "";
-  
-  String[] destinationCity = null; //values[8]
 
   void sortData(){
     try{
