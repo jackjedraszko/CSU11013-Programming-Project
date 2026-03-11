@@ -1,3 +1,5 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
@@ -8,18 +10,22 @@ public class DataReader
       String fileName = "flights(2k)(1) (1).csv";
       String line = "";
 
-      try
+        try
         {
-          BufferedReader bfrRdr = new BufferedReader(new FileReader(fileName));
-          while((line = bfrRdr.readLine()) != null)
+            BufferedReader bfrRdr = new BufferedReader(new FileReader(fileName));
+            while((line = bfrRdr.readLine()) != null)
             {
-              String[] values = line.split(",");
-              System.out.println("FlightDate: " + value[0]);
+                String[] values = line.split(",");
+                System.out.println("FlightDate: " + values[0]);
             }
         }
-      catch (exception e)
+        catch (FileNotFoundException e)
         {
-          System.out.println(e);
+            System.out.print(e);
+        }
+        catch(IOException e)
+        {
+            System.out.print(e);
         }
     }
   }
