@@ -11,8 +11,26 @@ void setup(){
 
 
 class DataReaders{
+  // define ArrayLists for all the variables from the file
   ArrayList<String> flightDate = new ArrayList<>();
+  ArrayList<String> indentityCode = new ArrayList<>();
+  ArrayList<String> flightNumber = new ArrayList<>();
+  ArrayList<String> originAirport = new ArrayList<>();
   ArrayList<String> originCity = new ArrayList<>();
+  ArrayList<String> originState = new ArrayList<>();
+  ArrayList<String> originWorldArea = new ArrayList<>();
+  ArrayList<String> destinationAirport = new ArrayList<>();
+  ArrayList<String> destinationCity = new ArrayList<>();
+  ArrayList<String> destinationState = new ArrayList<>();
+  ArrayList<String> destinationWorldArea = new ArrayList<>();
+  ArrayList<String> scheduledDepartureTime = new ArrayList<>();
+  ArrayList<String> actualDepartureTime = new ArrayList<>();
+  ArrayList<String> scheduledArrivalTime = new ArrayList<>();
+  ArrayList<String> actualArrivalTime = new ArrayList<>();
+  ArrayList<String> cancelled = new ArrayList<>();
+  ArrayList<String> diverted = new ArrayList<>();
+  ArrayList<String> distance = new ArrayList<>();
+
   String fileName = "flights.csv";
   String line = "";
   
