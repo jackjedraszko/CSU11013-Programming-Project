@@ -33,16 +33,32 @@ class DataReaders{
 
   String fileName = "flights.csv";
   String line = "";
-
+  
   void sortData(){
     try{
     BufferedReader bfrRdr = new BufferedReader(new FileReader(dataPath(fileName)));
     
-    while((line = bfrRdr.readLine()) != null){
+    while((line = bfrRdr.readLine()) != null)
+    {
       String[] values = line.split(",");
       flightDate.add(values[0]);
-
-      
+      indentityCode.add(values[1]);
+      flightNumber.add(values[2]);
+      originAirport.add(values[3]);
+      originCity.add(values[4]);
+      originState.add(values[5]);
+      originWorldArea.add(values[6]);
+      destinationAirport.add(values[7]);
+      destinationCity.add(values[8]);
+      destinationState.add(values[9]);
+      destinationWorldArea.add(values[10]);
+      scheduledDepartureTime.add(values[11]);
+      actualDepartureTime.add(values[12]);
+      scheduledArrivalTime.add(values[13]);
+      actualArrivalTime.add(values[14]);
+      cancelled.add(values[15]);
+      diverted.add(values[16]);
+      distance.add(values[17]);
     }
     
     bfrRdr.close();
@@ -54,5 +70,4 @@ class DataReaders{
       println("Error reading file: " + e);
     }
   }
-  
 }
