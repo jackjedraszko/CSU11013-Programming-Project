@@ -8,16 +8,16 @@ void setup()
     screen1.addWidget(new Widget(150, 500, 300, 150, "Maps", color(255, 0, 0)));
     screen1.addWidget(new Widget(550, 500, 300, 150, "Charts",  color(0, 200, 0)));
     screen1.addWidget(new Widget(950, 500, 300, 150, "Tables",  color(0, 200, 0)));
-
+    
     
     screen2 = new Screen(color(180));          // grey background
     screen2.addWidget(new Widget(200, 150, 160, 50, "Origin city",  color(0, 0, 255)));
-    screen2.addWidget(new Widget(200, 240, 160, 50, "Arrival time", color(0, 210, 210)));
+    screen2.addWidget(new Widget(200, 240, 160, 50, "Backwards", color(0, 210, 210)));
     
     
      screen3 = new Screen(color(255, 255));  
      screen3.addWidget(new Widget(350, 150, 160, 50, "Destination city", color(255, 0, 0)));
-     screen3.addWidget(new Widget(350, 240, 160, 50, "Scheduled time",  color(0, 200, 0)));
+     screen3.addWidget(new Widget(350, 240, 160, 50, "Backwards",  color(0, 200, 0)));
      
      screen4 = new Screen(color(255, 0 , 255));
      screen4.addWidget(new Widget(15, 150, 160, 50, "Flight numbers", color(255, 0, 0)));
