@@ -37,19 +37,15 @@ void mousePressed()
     
     if (pressed != null)
     {
-        if (pressed.label.equals("Forward"))
+         if (pressed.label.equals("Maps"))
         {
             currentScreen = screen2;
         }
-        else if (pressed.label.equals("Backward"))
+        else if (pressed.label.equals("Charts"))
         {
-            currentScreen = screen1;
+            currentScreen = screen3;
         }
-        else if (pressed.label.equals("Destination city"))
-        {
-           currentScreen = screen3;
-        }
-        else if (pressed.label.equals("Flight numbers"))
+        else if (pressed.label.equals("Tables"))
         {
            currentScreen = screen4;
         }
