@@ -2,11 +2,13 @@ Screen screen1, screen2, screen3, screen4, currentScreen;
 
 void setup() 
 {
-    size(500, 400);
+    size(1400, 800);
     
     screen1 = new Screen(color(255));          // white background
-    screen1.addWidget(new Widget(50, 150, 160, 50, "Button 1", color(255, 0, 0)));
-    screen1.addWidget(new Widget(50, 240, 160, 50, "Forward",  color(0, 200, 0)));
+    screen1.addWidget(new Widget(100, 400, 160, 50, "Maps", color(255, 0, 0)));
+    screen1.addWidget(new Widget(500, 400, 160, 50, "Charts",  color(0, 200, 0)));
+    screen1.addWidget(new Widget(900, 400, 160, 50, "Tables",  color(0, 200, 0)));
+
     
     screen2 = new Screen(color(180));          // grey background
     screen2.addWidget(new Widget(200, 150, 160, 50, "Origin city",  color(0, 0, 255)));
