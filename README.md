@@ -1,2 +1,6 @@
 # CSU11013-Programming-Project
-float 
+Group members:
+Kira Generalova
+Lauren Duggan
+Jacek Jedraszko
+Ines Benito Massa
