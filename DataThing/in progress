@@ -5,9 +5,9 @@ void setup()
     size(1400, 800);
     
     screen1 = new Screen(color(255));          // white background
-    screen1.addWidget(new Widget(100, 400, 160, 50, "Maps", color(255, 0, 0)));
-    screen1.addWidget(new Widget(500, 400, 160, 50, "Charts",  color(0, 200, 0)));
-    screen1.addWidget(new Widget(900, 400, 160, 50, "Tables",  color(0, 200, 0)));
+    screen1.addWidget(new Widget(150, 500, 300, 150, "Maps", color(255, 0, 0)));
+    screen1.addWidget(new Widget(550, 500, 300, 150, "Charts",  color(0, 200, 0)));
+    screen1.addWidget(new Widget(950, 500, 300, 150, "Tables",  color(0, 200, 0)));
 
     
     screen2 = new Screen(color(180));          // grey background
