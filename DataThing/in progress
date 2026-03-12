@@ -16,12 +16,13 @@ void setup()
     
     
      screen3 = new Screen(color(255, 255));  
-     screen2.addWidget(new Widget(350, 150, 160, 50, "Destination city", color(255, 0, 0)));
-     screen2.addWidget(new Widget(350, 240, 160, 50, "Scheduled time",  color(0, 200, 0)));
+     screen3.addWidget(new Widget(350, 150, 160, 50, "Destination city", color(255, 0, 0)));
+     screen3.addWidget(new Widget(350, 240, 160, 50, "Scheduled time",  color(0, 200, 0)));
      
      screen4 = new Screen(color(255, 0 , 255));
-     screen2.addWidget(new Widget(15, 150, 160, 50, "Flight numbers", color(255, 0, 0)));
-     screen2.addWidget(new Widget(15, 240, 160, 50, "Backwards",  color(0, 200, 0)));
+     screen4.addWidget(new Widget(15, 150, 160, 50, "Flight numbers", color(255, 0, 0)));
+     screen4.addWidget(new Widget(15, 240, 160, 50, "Backwards",  color(0, 200, 0)));
+      
       
     currentScreen = screen1;
 }
