@@ -3,17 +3,24 @@ import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-DataReader datareader;       //variable declared
+DataReader datareader;
 
 
-void setup(){                        //runs once when the program starts
-  datareader = new DataReader();      //create a new dataReader object
-  datareader.sortData();               //calls the method to read and process the CSV file
-  println(datareader.originState);            //prints the entire originState ArrayList
+void setup(){
+  size(500,600);
+  datareader = new DataReader();
+  datareader.sortData();
+  println(datareader.originState);
+  
+  String[] cancelled = datareader.cancelled.toArray(new String[0]);
+  
+  int[] cancelledList = changeType(cancelled);
+  
+  pieChart(100, cancelledList);
 }
 
 
-class DataReader{         //defines a custom class to handle the data reading
+class DataReader{
   // define ArrayLists for all the variables from the file
   ArrayList<String> flightDate = new ArrayList<>();
   ArrayList<String> indentityCode = new ArrayList<>();
@@ -35,21 +42,18 @@ class DataReader{         //defines a custom class to handle the data reading
   ArrayList<String> distance = new ArrayList<>();
 
   String fileName = "flights.csv";
-  String line = "";        //will temporarily store each line read from the file
+  String line = "";
   
-  void sortData(){       //method that reads and processes the CSV file
+  
+  
+  void sortData(){
     try{
-    BufferedReader bfrRdr = new BufferedReader(new FileReader(dataPath(fileName)));  //creates a BufferedReader to read the file efficiently
-    //dataPath(fileName) ensures the file is found in the sketch's data folder
+    BufferedReader bfrRdr = new BufferedReader(new FileReader(dataPath(fileName)));
     
-    while((line = bfrRdr.readLine()) != null)   //Reads the file line by line until there are no more lines
+    while((line = bfrRdr.readLine()) != null)
     {
       String[] values = line.split(",");
-      //Each line is split by commas into a String array called values[]
-      //Each element of values[] corresponds to a column in the CSV
-      
-      
-      flightDate.add(values[0]);     //Takes each value from the split line and adds it to the corresponding ArrayList
+      flightDate.add(values[0]);
       indentityCode.add(values[1]);
       flightNumber.add(values[2]);
       originAirport.add(values[3]);
@@ -67,9 +71,9 @@ class DataReader{         //defines a custom class to handle the data reading
       cancelled.add(values[15]);
       diverted.add(values[16]);
       distance.add(values[17]);
-    } 
+    }
     
-    bfrRdr.close();   //Closes the file reader to free up system resources.
+    bfrRdr.close();
     }
     catch (FileNotFoundException e){
       println("File not found: " + e);
@@ -79,3 +83,13 @@ class DataReader{         //defines a custom class to handle the data reading
     }
   }
 }
+
+public int[] changeType(String[] values){
+     int[] temp = new int[values.length];
+     
+     for(int i = 0; i <= values.length; i++){
+       temp[i] = Integer.parseInt(values[i]);   //.substring(0,2) add later for time   
+     }
+     
+     return temp;
+ }
