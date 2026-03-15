@@ -8,12 +8,15 @@ import java.util.ArrayList;
 DataReader datareader;
 Screen screen1, screen2, screen3, screen4, currentScreen;
 boolean darkMode = false;
+PImage logo;
 
 
 // ==== Setup ====
 void setup() {
   size(1300, 700);
   textAlign(CENTER, CENTER);
+
+  logo = loadImage("logo.png");
 
   // === Data ===
   datareader = new DataReader();

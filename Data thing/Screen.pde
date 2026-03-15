@@ -31,6 +31,9 @@ class Screen {
     for (Widget w : widgets) {
       w.draw();
     }
+    
+    //if (logo != null) image(logo, 20, 10, 100, 100);
+    
   }
 }
 
