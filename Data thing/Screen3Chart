@@ -1,0 +1,278 @@
+// ==== Screen3: Charts ====
+class Screen3 extends Screen {
+  color btnColor;
+  String[] topCities;
+  int[] cityCounts;
+  
+  Screen3(color bgColor, color btnColor) {
+    super(bgColor);
+    this.btnColor = btnColor;
+    
+    // Analyze destination cities from your data
+    analyzeDestinationCities();
+  
+    addWidget(new Widget(width/2 - 150, height - 100, 300, 150, "Destination city", color(255, 0, 0)));
+    addWidget(new Widget(50, height - 100, 300, 150, "Backwards", color(0, 200, 0)));
+  }
+  
+  void analyzeDestinationCities() {
+    // Create two ArrayLists that work together
+    ArrayList<String> cityNames = new ArrayList<String>();
+    ArrayList<Integer> cityCountsList = new ArrayList<Integer>();
+    
+    // Loop through ALL destination cities in your data
+    for (int i = 0; i < datareader.destinationCity.size(); i++) {
+      String currentCity = datareader.destinationCity.get(i);
+      
+      // Check if we've seen this city before
+      int cityIndex = -1;
+      for (int j = 0; j < cityNames.size(); j++) {
+        if (cityNames.get(j).equals(currentCity)) {
+          cityIndex = j;
+          break;
+        }
+      }
+      
+      if (cityIndex == -1) {
+        // New city - add it to both ArrayLists
+        cityNames.add(currentCity);
+        cityCountsList.add(1);
+      } 
+      else 
+      {
+        // Existing city - increment its count
+        int currentCount = cityCountsList.get(cityIndex);
+        cityCountsList.set(cityIndex, currentCount + 1);
+      }
+    }
+    
+    // Convert ArrayLists to regular arrays for sorting
+    String[] tempCities = new String[cityNames.size()];
+    int[] tempCounts = new int[cityCountsList.size()];
+    
+    for (int i = 0; i < cityNames.size(); i++) {
+      tempCities[i] = cityNames.get(i);
+      tempCounts[i] = cityCountsList.get(i);
+    }
+    
+    // Sort arrays by count (highest to lowest) using bubble sort
+    for (int i = 0; i < tempCounts.length - 1; i++) {
+      for (int j = 0; j < tempCounts.length - i - 1; j++) {
+        if (tempCounts[j] < tempCounts[j + 1]) {
+          // Swap counts
+          int tempCount = tempCounts[j];
+          tempCounts[j] = tempCounts[j + 1];
+          tempCounts[j + 1] = tempCount;
+          
+          // Swap cities (to keep them matching their counts)
+          String tempCity = tempCities[j];
+          tempCities[j] = tempCities[j + 1];
+          tempCities[j + 1] = tempCity;
+        }
+      }
+    }
+    
+    // Keep only top 8 cities (or fewer if there aren't 8)
+    int topCount = min(8, tempCities.length);
+    topCities = new String[topCount];
+    cityCounts = new int[topCount];
+    
+    for (int i = 0; i < topCount; i++) {
+      topCities[i] = tempCities[i];
+      cityCounts[i] = tempCounts[i];
+    }
+    
+    // Print to console so you can see the data
+    println("=== TOP DESTINATION CITIES ===");
+    for (int i = 0; i < topCount; i++) {
+      println((i+1) + ". " + topCities[i] + ": " + cityCounts[i] + " flights");
+    }
+    println("==============================");
+  }
+  
+  void draw() {
+    // Handle dark/light mode colors
+    if (darkMode){
+      bgColor = color(#1a1f2e);
+      btnColor = color(#3a8c6e);
+    }else{
+      bgColor = color(#f5f0eb);
+      btnColor = color(#4a6fa5);
+    }
+ 
+    // Update button colors
+    for (Widget w : widgets) {
+      if (!w.label.equals("Theme")) {
+        w.btnColor = btnColor;
+      }
+    }
+ 
+    // Draw all buttons
+    super.draw();
+
+    // Draw dark/light mode toggle switch
+    color trackColor = darkMode ? color(74, 111, 165) : color(200);
+    color knobColor  = color(255);
+    int tx = width - 100;
+    int ty = 30;
+  
+    // Text for toggle
+    fill(darkMode ? color(200) : color(80));
+    textSize(15);
+    textAlign(RIGHT, CENTER);
+    text(darkMode ? "Light mode" : "Dark mode", tx - 10, ty + 10);
+  
+    // Draw toggle track
+    noStroke();
+    fill(trackColor);
+    rect(tx, ty, 46, 22, 11);
+  
+    // Draw toggle knob
+    fill(knobColor);
+    float knobX = darkMode ? tx + 27 : tx + 3;
+    circle(knobX + 8, ty + 11, 18);
+
+    // Draw title
+    fill(darkMode ? color(91, 142, 125) : color(58, 140, 110));              
+    textSize(60);
+    textAlign(CENTER, CENTER);
+    text("Charts", width/2, 80);
+    
+    // Draw subtitle
+    textSize(20);
+    text("Top Destination Cities", width/2, 130);
+    
+    // Draw the bar chart
+    drawBarChart();
+    
+    // Draw text summary on screen
+    displayDataSummary();
+  }
+  
+  void drawBarChart() {
+    // Don't draw if there's no data
+    if (topCities == null || topCities.length == 0) return;
+    
+    // Define where the chart will be drawn
+    float chartTop = 180;
+    float chartBottom = 450;
+    float chartLeft = 150;
+    float chartRight = width - 150;
+    
+    // Find the maximum count for scaling
+    int maxCount = 0;
+    for (int i = 0; i < cityCounts.length; i++) {
+      if (cityCounts[i] > maxCount) {
+        maxCount = cityCounts[i];
+      }
+    }
+    
+    // Calculate bar width based on screen space
+    float barWidth = (chartRight - chartLeft) / (topCities.length * 2);
+    float spacing = barWidth / 2;
+    
+    // Draw Y axis (vertical line)
+    stroke(darkMode ? 200 : 0);
+    strokeWeight(2);
+    line(chartLeft, chartTop, chartLeft, chartBottom);
+    
+    // Draw X axis (horizontal line)
+    line(chartLeft, chartBottom, chartRight, chartBottom);
+    
+    // Draw horizontal grid lines and Y-axis labels
+    strokeWeight(1);
+    for (int i = 0; i <= 5; i++) {
+      // Calculate y position for this grid line
+      float y = chartBottom - (i * (chartBottom - chartTop) / 5);
+      
+      // Draw grid line
+      stroke(darkMode ? 100 : 200);
+      line(chartLeft, y, chartRight, y);
+      
+      // Add number label on Y-axis
+      fill(darkMode ? 200 : 0);
+      textSize(12);
+      textAlign(RIGHT, CENTER);
+      int value = (int) (i * maxCount / 5.0);
+      text(value, chartLeft - 10, y);
+    }
+    
+    // Draw each bar
+    for (int i = 0; i < topCities.length; i++) {
+      // Calculate bar position
+      float x = chartLeft + spacing + i * (barWidth + spacing * 2);
+      
+      // Calculate bar height based on flight count
+      float barHeight = map(cityCounts[i], 0, maxCount, 0, chartBottom - chartTop);
+      float y = chartBottom - barHeight;
+      
+      // Set bar color (different for each city)
+      color barColor;
+      if (darkMode) {
+        barColor = color(58 + i * 20, 140 - i * 10, 110 + i * 15);
+      } else {
+        barColor = color(74 + i * 15, 111 - i * 8, 165 - i * 12);
+      }
+      
+      // Draw the bar
+      fill(barColor);
+      noStroke();
+      rect(x, y, barWidth, barHeight);
+      
+      // Add the count number on top of the bar
+      fill(darkMode ? 255 : 0);
+      textSize(12);
+      textAlign(CENTER, BOTTOM);
+      text(cityCounts[i], x + barWidth/2, y - 5);
+      
+      // Add city name label below the bar
+      textAlign(CENTER, TOP);
+      String cityLabel;
+      if (topCities[i].length() > 10) {
+        cityLabel = topCities[i].substring(0, 10) + "...";
+      } else {
+        cityLabel = topCities[i];
+      }
+      text(cityLabel, x + barWidth/2, chartBottom + 10);
+    }
+  }
+  
+  void displayDataSummary() {
+    // Position for text on the right side of screen
+    int textX = width - 320;
+    int textY = 50;
+    
+    fill(darkMode ? 255 : 0);
+    textAlign(LEFT);
+    textSize(14);
+    
+    // Display statistics
+    text("DATA SUMMARY", textX, textY);
+    textY += 30;
+    
+    text("Total flights: " + datareader.destinationCity.size(), textX, textY);
+    textY += 25;
+    
+    text("Unique destinations: " + topCities.length, textX, textY);
+    textY += 25;
+    
+    text("Top 3 cities:", textX, textY);
+    textY += 25;
+    
+    // Show top 3 cities
+    for (int i = 0; i < min(3, topCities.length); i++) {
+      text((i+1) + ". " + topCities[i], textX + 20, textY);
+      textY += 20;
+      text("   " + cityCounts[i] + " flights", textX + 20, textY);
+      textY += 25;
+    }
+    
+    // Add some extra info
+    if (topCities.length > 0) {
+      textY += 10;
+      text("Busiest airport:", textX, textY);
+      textY += 20;
+      text(topCities[0] + " (" + cityCounts[0] + " flights)", textX + 20, textY);
+    }
+  }
+}
