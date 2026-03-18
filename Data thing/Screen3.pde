@@ -1,58 +1,102 @@
 // ==== Screen3: Charts ====
 class Screen3 extends Screen {
   color btnColor;
+  int cancelled = 0, onTime = 0;
+  String[] topCities;
+  int[] cityCounts;
+  
   
   Screen3(color bgColor, color btnColor) {
     super(bgColor);
     this.btnColor = btnColor;
-  
-    addWidget(new Widget(width/2 , height/2, 300, 150, "Destination city", color(255, 0, 0)));
-    addWidget(new Widget(300, height/2, 300, 150, "Backwards",        color(0, 200, 0)));
-  }
-  
-  void draw() {
-    if (darkMode){
-      bgColor = color(#1a1f2e);
-      btnColor = color(#3a8c6e);
-    }else{
-      bgColor = color(#f5f0eb);
-      btnColor = color(#4a6fa5);
-    }
- 
+
     for (Widget w : widgets) {
-      if (!w.label.equals("Theme")) {
-        w.btnColor = btnColor;
-      }
+      w.hoverable = true;
     }
- 
+    //addWidget(new Widget(200, 20, 300, 50, "Destination city", btnColor));
+
+
+    // count data once in constructor
+    for (String s : datareader.cancelled) {
+      if (s.trim().equals("1")) cancelled++;
+      else onTime++;
+    }
+    
+    analyzeDestinationCities();
+  }
+
+  void draw() {
     super.draw();
 
-    // Toggle
-    color trackColor = darkMode ? color(74, 111, 165) : color(200);
-    color knobColor  = color(255);
-    int tx = width - 100;
-    int ty = 30;
-  
-    // Text
-    fill(darkMode ? color(200) : color(80));
-    textSize(15);
-    textAlign(RIGHT, CENTER);
-    text(darkMode ? "Light mode" : "Dark mode", tx - 10, ty + 10);
-  
-    // Track
-    noStroke();
-    fill(trackColor);
-    rect(tx, ty, 46, 22, 11);
-  
-    // Circle
-    fill(knobColor);
-    float knobX = darkMode ? tx + 27 : tx + 3;
-    circle(knobX + 8, ty + 11, 18);
-
-    
-    fill(darkMode ? color(91, 142, 125) : color(58, 140, 110));              
-    textSize(60);
+// === headline ===
+    fill(darkMode ? color(255) : color(58, 140, 110));
+    textSize(32);
     textAlign(CENTER, CENTER);
-    text("Charts", width/2, height/3);
+    text("Flight Cancellations", width/4, 150);
+
+// === draw chart first === 
+    pieChart(
+      width/4, height/2 + 20, 360,
+      new String[] { "Cancelled", "On time" },
+      new color[]  { color(#e07b54), color(#4a6fa5) },
+      new float[]  { cancelled, onTime }
+    );
+
+    float midX = width / 2.0;
+    
+
+    // ── Right half: bar chart ──
+    text("Top Destination Cities", midX + midX / 2, 80);
+
+    barChart(
+      midX + 40,  // chartLeft
+      120,        // chartTop
+      width - 40, // chartRight
+      height - 80,// chartBottom
+      topCities,
+      cityCounts
+    );
+  }
+  
+  
+  void analyzeDestinationCities() {
+    ArrayList<String> cityNames      = new ArrayList<String>();
+    ArrayList<Integer> cityCountsList = new ArrayList<Integer>();
+  
+    // this loop should only count cities
+    for (String city : datareader.destinationCity) {
+      int idx = cityNames.indexOf(city);
+      if (idx == -1) {
+        cityNames.add(city);
+        cityCountsList.add(1);
+      } else {
+        cityCountsList.set(idx, cityCountsList.get(idx) + 1);
+      }
+    } // ← loop ends here
+  
+    // everything below runs ONCE after the loop
+    String[] tempCities = cityNames.toArray(new String[0]);
+    int[] tempCounts    = new int[cityCountsList.size()];
+    for (int i = 0; i < cityCountsList.size(); i++) {
+      tempCounts[i] = cityCountsList.get(i);
+    }
+  
+    // bubble sort
+    for (int i = 0; i < tempCounts.length - 1; i++) {
+      for (int j = 0; j < tempCounts.length - i - 1; j++) {
+        if (tempCounts[j] < tempCounts[j+1]) {
+          int tc = tempCounts[j]; tempCounts[j] = tempCounts[j+1]; tempCounts[j+1] = tc;
+          String ts = tempCities[j]; tempCities[j] = tempCities[j+1]; tempCities[j+1] = ts;
+        }
+      }
+    }
+  
+    int top = min(8, tempCities.length);
+    topCities  = new String[top];
+    cityCounts = new int[top];
+    for (int i = 0; i < top; i++) {
+      topCities[i]  = tempCities[i];
+      cityCounts[i] = tempCounts[i];
+    }
   }
 }

@@ -1,7 +1,9 @@
 // ==== DataReader Class ====
 class DataReader {
+
+  // ArrayLists for each column in the CSV
   ArrayList<String> flightDate             = new ArrayList<>();
-  ArrayList<String> identityCode           = new ArrayList<>();
+  ArrayList<String> indentityCode          = new ArrayList<>();
   ArrayList<String> flightNumber           = new ArrayList<>();
   ArrayList<String> originAirport          = new ArrayList<>();
   ArrayList<String> originCity             = new ArrayList<>();
@@ -26,12 +28,15 @@ class DataReader {
     try {
       BufferedReader bfrRdr = new BufferedReader(new FileReader(dataPath(fileName)));
 
-      bfrRdr.readLine(); 
+      bfrRdr.readLine(); // skip header row
 
       while ((line = bfrRdr.readLine()) != null) {
-        String[] values = line.split(",");
+        String[] values = parseCSVLine(line); // use CSV parser instead of split()
+
+        if (values.length < 18) continue; // skip malformed rows
+
         flightDate.add(values[0]);
-        identityCode.add(values[1]);
+        indentityCode.add(values[1]);
         flightNumber.add(values[2]);
         originAirport.add(values[3]);
         originCity.add(values[4]);
@@ -59,76 +64,28 @@ class DataReader {
       println("Error reading file: " + e);
     }
   }
-  ArrayList<String> getFlightDate()
-  {
-    return flightDate;
-  }
-  ArrayList<String> getIdentityCode()
-  {
-    return identityCode;
-  }
-  ArrayList<String> getFlightNumber()
-  {
-    return flightNumber;
-  }
-  ArrayList<String> getOriginAirport()
-  {
-    return originAirport;
-  }
-  ArrayList<String> getOriginCity()
-  {
-    return originCity;
-  }
-  ArrayList<String> getOriginState()
-  {
-    return originState;
-  }
-  ArrayList<String> getOriginWorldArea()
-  {
-    return originWorldArea;
-  }
-  ArrayList<String> getDestinationAirport()
-  {
-    return destinationAirport;
-  }
-  ArrayList<String> getDestinationCity()
-  {
-    return destinationCity;
-  }
-  ArrayList<String> getDestinationState()
-  {
-    return destinationState;
-  }
-  ArrayList<String> getDestinationWorldArea()
-  {
-    return destinationWorldArea;
-  }
-  ArrayList<String> getScheduledDepartureTime()
-  {
-    return scheduledDepartureTime;
-  }
-  ArrayList<String> getActualDepartureTime()
-  {
-    return actualDepartureTime;
-  }
-  ArrayList<String> getScheduledArrivalTime()
-  {
-    return scheduledArrivalTime;
-  }
-  ArrayList<String> getActualArrivalTime()
-  {
-    return actualArrivalTime;
-  }
-  ArrayList<String> getCancelled()
-  {
-    return cancelled;
-  }
-  ArrayList<String> getDiverted()
-  {
-    return diverted;
-  }
-  ArrayList<String> getDistance()
-  {
-    return distance;
+
+  // Parses a single CSV line, correctly handling commas inside quoted fields
+  // e.g. "New York, NY",NY,... is read as one field, not two
+  String[] parseCSVLine(String line) {
+    ArrayList<String> result = new ArrayList<String>();
+    boolean inQuotes = false;
+    StringBuilder current = new StringBuilder();
+
+    for (int i = 0; i < line.length(); i++) {
+      char c = line.charAt(i);
+
+      if (c == '"') {
+        inQuotes = !inQuotes; // toggle in/out of quoted field
+      } else if (c == ',' && !inQuotes) {
+        result.add(current.toString().trim()); // end of field
+        current = new StringBuilder();
+      } else {
+        current.append(c); // add character to current field
+      }
+    }
+
+    result.add(current.toString().trim()); // add last field
+    return result.toArray(new String[0]);
   }
 }
