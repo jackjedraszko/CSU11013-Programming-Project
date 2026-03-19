@@ -65,6 +65,79 @@ class DataReader {
     }
   }
 
+  ArrayList<String> getFlightDate()
+  {
+    return flightDate;
+  }
+  ArrayList<String> getIdentityCode()
+  {
+    return identityCode;
+  }
+  ArrayList<String> getFlightNumber()
+  {
+    return flightNumber;
+  }
+  ArrayList<String> getOriginAirport()
+  {
+    return originAirport;
+  }
+  ArrayList<String> getOriginCity()
+  {
+    return originCity;
+  }
+  ArrayList<String> getOriginState()
+  {
+    return originState;
+  }
+  ArrayList<String> getOriginWorldArea()
+  {
+    return originWorldArea;
+  }
+  ArrayList<String> getDestinationAirport()
+  {
+    return destinationAirport;
+  }
+  ArrayList<String> getDestinationCity()
+  {
+    return destinationCity;
+  }
+  ArrayList<String> getDestinationState()
+  {
+    return destinationState;
+  }
+  ArrayList<String> getDestinationWorldArea()
+  {
+    return destinationWorldArea;
+  }
+  ArrayList<String> getScheduledDepartureTime()
+  {
+    return scheduledDepartureTime;
+  }
+  ArrayList<String> getActualDepartureTime()
+  {
+    return actualDepartureTime;
+  }
+  ArrayList<String> getScheduledArrivalTime()
+  {
+    return scheduledArrivalTime;
+  }
+  ArrayList<String> getActualArrivalTime()
+  {
+    return actualArrivalTime;
+  }
+  ArrayList<String> getCancelled()
+  {
+    return cancelled;
+  }
+  ArrayList<String> getDiverted()
+  {
+    return diverted;
+  }
+  ArrayList<String> getDistance()
+  {
+    return distance;
+  }
+
   // Parses a single CSV line, correctly handling commas inside quoted fields
   // e.g. "New York, NY",NY,... is read as one field, not two
   String[] parseCSVLine(String line) {
