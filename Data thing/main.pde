@@ -23,6 +23,8 @@ void setup() {
 
   logo = loadImage("logo2.jpg");
 
+  table = new Table();
+
   // === Data ===
   datareader = new DataReader();
   datareader.sortData();
