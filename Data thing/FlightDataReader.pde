@@ -3,7 +3,7 @@ class DataReader {
 
   // ArrayLists for each column in the CSV
   ArrayList<String> flightDate             = new ArrayList<>();
-  ArrayList<String> indentityCode          = new ArrayList<>();
+  ArrayList<String> identityCode          = new ArrayList<>();
   ArrayList<String> flightNumber           = new ArrayList<>();
   ArrayList<String> originAirport          = new ArrayList<>();
   ArrayList<String> originCity             = new ArrayList<>();
@@ -36,7 +36,7 @@ class DataReader {
         if (values.length < 18) continue; // skip malformed rows
 
         flightDate.add(values[0]);
-        indentityCode.add(values[1]);
+        identityCode.add(values[1]);
         flightNumber.add(values[2]);
         originAirport.add(values[3]);
         originCity.add(values[4]);
