@@ -16,7 +16,7 @@ void setup() {
   size(1300, 700);
   textAlign(CENTER, CENTER);
 
-  logo = loadImage("logo.png");
+  logo = loadImage("logo2.jpg");
 
   // === Data ===
   datareader = new DataReader();
@@ -49,6 +49,7 @@ void mousePressed() {
     return;
   }
 
+  // Dark mode toggle
   int tx = width - 100;
   int ty = 30;
   if (mouseX > tx && 
@@ -69,8 +70,6 @@ void mousePressed() {
       currentScreen = screen3;
     } else if (pressed.label.equals("Tables")) {
       currentScreen = screen4;
-    } else if (pressed.label.equals("Backwards")) {
-      currentScreen = screen1;
     } else {
       println("Button pressed: " + pressed.label);
     }
