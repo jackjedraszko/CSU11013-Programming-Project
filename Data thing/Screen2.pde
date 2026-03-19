@@ -79,27 +79,27 @@ void setupAirports()
 {
 
   airports.add(new Airport("JFK", 794, 180));
-  airports.add(new Airport("LAX", 90, 330));
+  airports.add(new Airport("LAX", 89, 312));
   airports.add(new Airport("ORD", 575, 198));
-  airports.add(new Airport("DCA", 770, 205));
+  airports.add(new Airport("DCA", 752, 227));
   airports.add(new Airport("FLL", 741, 475));
   airports.add(new Airport("SEA", 79, 36));
   airports.add(new Airport("HNL", 280, 490));
-  airports.add(new Airport("LAS", 135, 292));
+  airports.add(new Airport("LAS", 135, 288));
   airports.add(new Airport("SFO", 40, 242));
   airports.add(new Airport("PHX", 185, 330));
   airports.add(new Airport("DEN", 298, 250));
   airports.add(new Airport("DFW", 415, 383));
   airports.add(new Airport("IAH", 463, 450));
-  airports.add(new Airport("ATL", 665, 360));    // BELOW TO FINE TUNE COORDINATION
-  airports.add(new Airport("CLT", 680, 290));  // Charlotte
-  airports.add(new Airport("MCO", 720, 420));  // Orlando
-  airports.add(new Airport("BOS", 810, 150));  // Boston
-  airports.add(new Airport("MSP", 520, 140));  // Minneapolis
-  airports.add(new Airport("DTW", 630, 200));  // Detroit
-  airports.add(new Airport("PHL", 760, 190));  // Philadelphia
-  airports.add(new Airport("SLC", 230, 220));  // Salt Lake City
-  airports.add(new Airport("SAN", 90, 360));   // San Diego
+  airports.add(new Airport("ATL", 665, 360));
+  airports.add(new Airport("CLT", 722, 313));
+  airports.add(new Airport("MCO", 712, 440));
+  airports.add(new Airport("BOS", 827, 148));
+  airports.add(new Airport("MSP", 492, 134));
+  airports.add(new Airport("DTW", 645, 182));
+  airports.add(new Airport("PHL", 763, 197));
+  airports.add(new Airport("SLC", 212, 215));
+  airports.add(new Airport("SAN", 90, 340));
 
 }
 
