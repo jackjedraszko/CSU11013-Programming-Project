@@ -40,6 +40,7 @@ class Screen2 extends Screen
 
     hooveredAirport = null;
     float closestDist = 999999;
+    float hooverRadius = 40;
        
     for (Airport a : airports)
     {
@@ -48,7 +49,7 @@ class Screen2 extends Screen
 
       float d = dist(mouseX, mouseY, screenX, screenY);
 
-      if (d < closestDist)
+      if (d < closestDist && d < hooverRadius)
       {
         closestDist = d;
         hooveredAirport = a;
