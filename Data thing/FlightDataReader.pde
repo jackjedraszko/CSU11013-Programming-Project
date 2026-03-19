@@ -3,7 +3,7 @@ class DataReader {
 
   // ArrayLists for each column in the CSV
   ArrayList<String> flightDate             = new ArrayList<>();
-  ArrayList<String> identityCode          = new ArrayList<>();
+  ArrayList<String> indentityCode          = new ArrayList<>();
   ArrayList<String> flightNumber           = new ArrayList<>();
   ArrayList<String> originAirport          = new ArrayList<>();
   ArrayList<String> originCity             = new ArrayList<>();
@@ -36,7 +36,7 @@ class DataReader {
         if (values.length < 18) continue; // skip malformed rows
 
         flightDate.add(values[0]);
-        identityCode.add(values[1]);
+        indentityCode.add(values[1]);
         flightNumber.add(values[2]);
         originAirport.add(values[3]);
         originCity.add(values[4]);
@@ -63,78 +63,6 @@ class DataReader {
     catch (IOException e) {
       println("Error reading file: " + e);
     }
-  }
-  ArrayList<String> getFlightDate()
-  {
-    return flightDate;
-  }
-  ArrayList<String> getIdentityCode()
-  {
-    return identityCode;
-  }
-  ArrayList<String> getFlightNumber()
-  {
-    return flightNumber;
-  }
-  ArrayList<String> getOriginAirport()
-  {
-    return originAirport;
-  }
-  ArrayList<String> getOriginCity()
-  {
-    return originCity;
-  }
-  ArrayList<String> getOriginState()
-  {
-    return originState;
-  }
-  ArrayList<String> getOriginWorldArea()
-  {
-    return originWorldArea;
-  }
-  ArrayList<String> getDestinationAirport()
-  {
-    return destinationAirport;
-  }
-  ArrayList<String> getDestinationCity()
-  {
-    return destinationCity;
-  }
-  ArrayList<String> getDestinationState()
-  {
-    return destinationState;
-  }
-  ArrayList<String> getDestinationWorldArea()
-  {
-    return destinationWorldArea;
-  }
-  ArrayList<String> getScheduledDepartureTime()
-  {
-    return scheduledDepartureTime;
-  }
-  ArrayList<String> getActualDepartureTime()
-  {
-    return actualDepartureTime;
-  }
-  ArrayList<String> getScheduledArrivalTime()
-  {
-    return scheduledArrivalTime;
-  }
-  ArrayList<String> getActualArrivalTime()
-  {
-    return actualArrivalTime;
-  }
-  ArrayList<String> getCancelled()
-  {
-    return cancelled;
-  }
-  ArrayList<String> getDiverted()
-  {
-    return diverted;
-  }
-  ArrayList<String> getDistance()
-  {
-    return distance;
   }
 
   // Parses a single CSV line, correctly handling commas inside quoted fields
