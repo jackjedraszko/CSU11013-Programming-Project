@@ -15,11 +15,14 @@ class Screen3 extends Screen {
     addWidget(new Widget(50, height - 100, 300, 150, "Backwards", color(0, 200, 0)));
   }
   
-  void analyzeDestinationCities() {
-    // Create two ArrayLists that work together
+  
+  void analyzeDestinationCities() {             //method that processes destination city data
+    // Create two ArrayLists that work together (Parallel, index 0 in both lists refers to the same city
     ArrayList<String> cityNames = new ArrayList<String>();
     ArrayList<Integer> cityCountsList = new ArrayList<Integer>();
     
+    
+    //COUNTING CITY FREQUENCIES
     // Loop through ALL destination cities in your data
     for (int i = 0; i < datareader.destinationCity.size(); i++) {
       String currentCity = datareader.destinationCity.get(i);
@@ -31,7 +34,8 @@ class Screen3 extends Screen {
           cityIndex = j;
           break;
         }
-      }
+      }  //Adds it as new city (count = 1) if not seen before
+      //Increments existing city's count if already in list
       
       if (cityIndex == -1) {
         // New city - add it to both ArrayLists
@@ -46,7 +50,12 @@ class Screen3 extends Screen {
       }
     }
     
+    
+    
+    
     // Convert ArrayLists to regular arrays for sorting
+    // Copies each city and its count to parallel arrays
+    //Now tempCities[0] and tempCounts[0] refer to the same city
     String[] tempCities = new String[cityNames.size()];
     int[] tempCounts = new int[cityCountsList.size()];
     
@@ -55,11 +64,14 @@ class Screen3 extends Screen {
       tempCounts[i] = cityCountsList.get(i);
     }
     
+    
+    //BUBBLE SORT (HIGHEST TO LOWEST)
     // Sort arrays by count (highest to lowest) using bubble sort
-    for (int i = 0; i < tempCounts.length - 1; i++) {
-      for (int j = 0; j < tempCounts.length - i - 1; j++) {
+    for (int i = 0; i < tempCounts.length - 1; i++) {     //Outer loop: Controls how many passes through the data
+      for (int j = 0; j < tempCounts.length - i - 1; j++) {  //Inner loop: Compares adjacent elements
         if (tempCounts[j] < tempCounts[j + 1]) {
-          // Swap counts
+          
+          //Swap condition: If current count is less than next count (meaning out of order for descending sort)
           int tempCount = tempCounts[j];
           tempCounts[j] = tempCounts[j + 1];
           tempCounts[j + 1] = tempCount;
@@ -72,7 +84,9 @@ class Screen3 extends Screen {
       }
     }
     
-    // Keep only top 8 cities (or fewer if there aren't 8)
+    
+    
+    // Keep only top 8 cities
     int topCount = min(8, tempCities.length);
     topCities = new String[topCount];
     cityCounts = new int[topCount];
@@ -82,13 +96,16 @@ class Screen3 extends Screen {
       cityCounts[i] = tempCounts[i];
     }
     
+    
+    
     // Print to console so you can see the data
-    println("=== TOP DESTINATION CITIES ===");
+    println("TOP DESTINATION CITIES");
     for (int i = 0; i < topCount; i++) {
       println((i+1) + ". " + topCities[i] + ": " + cityCounts[i] + " flights");
     }
     println("==============================");
   }
+  
   
   void draw() {
     // Handle dark/light mode colors
@@ -99,6 +116,7 @@ class Screen3 extends Screen {
       bgColor = color(#f5f0eb);
       btnColor = color(#4a6fa5);
     }
+ 
  
     // Update button colors
     for (Widget w : widgets) {
