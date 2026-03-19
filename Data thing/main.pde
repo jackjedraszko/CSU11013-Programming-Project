@@ -43,7 +43,6 @@ void draw() {
 // ==== Mouse Events ====
 void mousePressed() {
 
-  // Logo click -> return to screen1
   if (mouseX > 20 && mouseX < 80 && mouseY > 10 && mouseY < 60) {
     currentScreen = screen1;
     return;
