@@ -46,7 +46,9 @@ class Screen3 extends Screen {
     
 
     // ── Right half: bar chart ──
-    text("Top Destination Cities", midX + midX / 2, 80);
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    text("Top Destination Cities", (width/4)*3, 80);
 
     barChart(
       midX + 40,  // chartLeft
