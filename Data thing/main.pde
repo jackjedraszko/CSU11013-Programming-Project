@@ -14,7 +14,7 @@ DataReader datareader;
 Screen screen1, screen2, screen3, screen4, currentScreen;
 boolean darkMode = false;
 PImage logo;
-
+Table table;
 
 // ==== Setup ====
 void setup() {
