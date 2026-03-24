@@ -35,7 +35,7 @@ void setup() {
   screen1 = new Screen1(color(#f5f0eb), color(#f5f0eb));
   screen2 = new Screen2(color(#f5f0eb), color(#f5f0eb), datareader);
   screen3 = new Screen3(color(#f5f0eb), color(#f5f0eb));
-  screen4 = new Screen4(color(#f5f0eb), color(#f5f0eb));
+  screen4 = new Screen4(color(#f5f0eb), color(#f5f0eb), datareader);
 
   currentScreen = screen1;
 }
@@ -54,6 +54,12 @@ void mousePressed() {
     currentScreen = screen1;
     return;
   }
+
+  if (currentScreen == screen4) {
+    ((Screen4) currentScreen).clicked(mouseX, mouseY);
+    return;
+  }
+
 
   // Dark mode toggle
   int tx = width - 100;
