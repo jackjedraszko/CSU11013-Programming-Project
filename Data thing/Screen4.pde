@@ -57,8 +57,7 @@ String formatTime(String raw) {
       else status = "ON TIME";
 
       data[i][0] = dr.flightNumber.get(i);
-      data[i][1] = dr.flightDate.get(i).replace(" 00:00", "");
-      data[i][1] = dr.flightDate.get(i).replace(" 12:00:00 AM", "");
+      data[i][1] = dr.flightDate.get(i).replace(" 00:00", "").replace(" 12:00:00 AM", "");
       data[i][2] = dr.originCity.get(i) + " (" + dr.originAirport.get(i) + ")";
       data[i][3] = dr.originState.get(i);
       data[i][4] = dr.destinationCity.get(i) + " (" + dr.destinationAirport.get(i) + ")";
