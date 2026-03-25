@@ -1,10 +1,13 @@
+// ==== Screen2 Maps ====
+
+
 class Screen2 extends Screen
 {
   color btnColor;
   PImage USmap;
   float maxTraffic = 1;
-  float minBubble = 6;
-  float maxBubble = 40;
+  float minBubble = 8;
+  float maxBubble = 45;
 
   ArrayList<Airport> airports = new ArrayList<Airport>();
   Airport hooveredAirport = null;
@@ -110,9 +113,11 @@ class Screen2 extends Screen
     void draw(float mapX, float mapY, boolean hovered)
     {
       float normalized = log(traffic + 1) / log(maxTraffic + 1);
+      float multiplier = 3.5;
+      normalized = pow(normalized, multiplier);
       
-      float minBubble = 6;
-      float maxBubble = 35;
+      float minBubble = 8;
+      float maxBubble = 45;
    
       float baseSize = minBubble + normalized * (maxBubble - minBubble);
       float size = baseSize;
