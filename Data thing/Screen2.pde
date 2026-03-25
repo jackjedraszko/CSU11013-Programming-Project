@@ -2,6 +2,9 @@ class Screen2 extends Screen
 {
   color btnColor;
   PImage USmap;
+  float maxTraffic = 1;
+  float minBubble = 6;
+  float maxBubble = 40;
 
   ArrayList<Airport> airports = new ArrayList<Airport>();
   Airport hooveredAirport = null;
@@ -17,6 +20,7 @@ class Screen2 extends Screen
 
     setupAirports();
     calculateTraffic();
+    calculateMaxTraffic();
 
     for (Widget w : widgets)
     {
@@ -77,6 +81,18 @@ class Screen2 extends Screen
       text(associatedFlights, width/2, 100);
     }
   }
+  void calculateMaxTraffic()
+  {
+    maxTraffic = 1;
+
+    for (Airport a : airports)
+    {
+      if (a.traffic > maxTraffic)
+      {
+        maxTraffic = a.traffic;
+      }
+    }
+  }
   class Airport
   {
     String code;
@@ -93,24 +109,26 @@ class Screen2 extends Screen
   
     void draw(float mapX, float mapY, boolean hovered)
     {
-      float baseSize = 8 + sqrt(traffic) * 4;
+      float normalized = traffic / maxTraffic;
+      float baseSize = minBubble + normalized * (maxBubble - minBubble);
       float size = baseSize;
-
+    
       if (hovered)
       {
         size = baseSize * 1.5;
       }
-
+    
       colorMode(HSB, 360, 100, 100, 255);
-      float hue = map(traffic, 0, 160, 200, 0);
+      float hue = map(normalized, 0, 1, 200, 0);
+    
       noStroke();
-
+    
       fill(hue, 90, 100, 80);
-      ellipse(mapX + x, mapY + y, size*1.2, size*1.2);
-
+      ellipse(mapX + x, mapY + y, size * 1.2, size * 1.2);
+    
       fill(hue, 90, 100, 220);
       ellipse(mapX + x, mapY + y, size, size);
-
+    
       colorMode(RGB, 255);
     }
   }
