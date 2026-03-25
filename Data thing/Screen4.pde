@@ -52,8 +52,8 @@ String formatTime(String raw) {
 
     for (int i = 0; i < n; i++) {
       String status;
-      if(dr.cancelled.get(i).equals("1")) status = "CANCELLED";
-      else if(dr.diverted.get(i).equals("1"))  status = "DIVERTED";
+      if(dr.cancelled.get(i).equals("1.00")) status = "CANCELLED";
+      else if(dr.diverted.get(i).equals("1") || dr.diverted.get(i).equals("1.00"))  status = "DIVERTED";
       else status = "ON TIME";
 
       data[i][0] = dr.flightNumber.get(i);
