@@ -24,6 +24,20 @@ class Screen4 extends Screen {
     this.dr = dr;
   }
 
+
+String formatTime(String raw) {
+  if (raw == null || raw.isEmpty()) return "";
+  try {
+    int t = Integer.parseInt(raw.trim());
+    int hours   = t / 100;
+    int minutes = t % 100;
+    return String.format("%02d:%02d", hours, minutes);
+  } catch (NumberFormatException e) {
+    return raw; // return as-is if it can't be parsed
+  }
+}
+
+
   void openTable() {
     if (tableOpen) { frame.toFront(); return; }
 
@@ -45,8 +59,8 @@ class Screen4 extends Screen {
       data[i][2] = dr.originCity.get(i) + " (" + dr.originAirport.get(i) + ")";
       data[i][3] = dr.originState.get(i);
       data[i][4] = dr.destinationCity.get(i) + " (" + dr.destinationAirport.get(i) + ")";
-      data[i][5] = dr.scheduledDepartureTime.get(i);
-      data[i][6] = dr.actualDepartureTime.get(i);
+      data[i][5] = formatTime(dr.scheduledDepartureTime.get(i));
+      data[i][6] = formatTime(dr.actualDepartureTime.get(i));
       data[i][7] = status;
     }
 
