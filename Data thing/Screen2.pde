@@ -1,4 +1,3 @@
-// ==== Screen2: Maps ====
 class Screen2 extends Screen
 {
   color btnColor;
@@ -110,7 +109,11 @@ class Screen2 extends Screen
   
     void draw(float mapX, float mapY, boolean hovered)
     {
-      float normalized = traffic / maxTraffic;
+      float normalized = log(traffic + 1) / log(maxTraffic + 1);
+      
+      float minBubble = 6;
+      float maxBubble = 35;
+   
       float baseSize = minBubble + normalized * (maxBubble - minBubble);
       float size = baseSize;
     
