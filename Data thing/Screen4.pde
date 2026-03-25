@@ -43,7 +43,7 @@ String formatTime(String raw) {
 
 //table data
     String[] headers = { "Flight", "Date", "Origin City", "Origin State",
-                         "Destination City", "Sched Dep", "Act Dep", "Status" };
+                         "Destination City", "Destination State", "Sched Dep", "Act Dep", "Status" };
 
     int n = dr.flightNumber.size();
     Object[][] data = new Object[n][headers.length];
@@ -59,9 +59,10 @@ String formatTime(String raw) {
       data[i][2] = dr.originCity.get(i) + " (" + dr.originAirport.get(i) + ")";
       data[i][3] = dr.originState.get(i);
       data[i][4] = dr.destinationCity.get(i) + " (" + dr.destinationAirport.get(i) + ")";
-      data[i][5] = formatTime(dr.scheduledDepartureTime.get(i));
-      data[i][6] = formatTime(dr.actualDepartureTime.get(i));
-      data[i][7] = status;
+      data[i][5] = dr.destinationState.get(i);
+      data[i][6] = formatTime(dr.scheduledDepartureTime.get(i));
+      data[i][7] = formatTime(dr.actualDepartureTime.get(i));
+      data[i][8] = status;
     }
 
 //table creationn
@@ -94,49 +95,70 @@ String formatTime(String raw) {
     states[0] = "All States";
     int si = 1;
     for (String s : stateSet) states[si++] = s;
+    
+    java.util.TreeSet<String> dStateSet = new java.util.TreeSet<>();
+    for (String s : dr.destinationState) dStateSet.add(s);
+    String[] dStates = new String[dStateSet.size() + 1];
+    dStates[0] = "All States";
+    int st = 1;
+    for (String s : dStateSet) dStates[st++] = s;
 
-    JComboBox<String> stateFilter  = new JComboBox<>(states);
+    JComboBox<String> oStateFilter  = new JComboBox<>(states);
     JComboBox<String> statusFilter = new JComboBox<>(new String[]{ "All Statuses", "ON TIME", "CANCELLED", "DIVERTED" });
+    JComboBox<String> dStateFilter  = new JComboBox<>(dStates);
 
-    stateFilter.setBackground(new Color(25, 28, 55));
-    stateFilter.setForeground(new Color(255, 210, 50));
+    oStateFilter.setBackground(new Color(25, 28, 55));
+    oStateFilter.setForeground(new Color(255, 210, 50));
     statusFilter.setBackground(new Color(25, 28, 55));
     statusFilter.setForeground(new Color(255, 210, 50));
+    dStateFilter.setBackground(new Color(25, 28, 55));
+    dStateFilter.setForeground(new Color(255, 210, 50));
 
     //applying filters
     java.awt.event.ActionListener filterAction = e -> {
-      String selectedState  = (String) stateFilter.getSelectedItem();
+      String selectedOState  = (String) oStateFilter.getSelectedItem();
       String selectedStatus = (String) statusFilter.getSelectedItem();
+      String selectedDState  = (String) dStateFilter.getSelectedItem();
 
-      RowFilter<DefaultTableModel, Object> stateF = selectedState.equals("All States")
-        ? null : RowFilter.regexFilter("(?i)^" + selectedState + "$", 3);
+      RowFilter<DefaultTableModel, Object> oStateF = selectedOState.equals("All States")
+        ? null : RowFilter.regexFilter("(?i)^" + selectedOState + "$", 3);
+        
+      RowFilter<DefaultTableModel, Object> dStateF = selectedDState.equals("All States")
+        ? null : RowFilter.regexFilter("(?i)^" + selectedDState + "$", 5);
 
       RowFilter<DefaultTableModel, Object> statusF = selectedStatus.equals("All Statuses")
-        ? null : RowFilter.regexFilter("(?i)^" + selectedStatus + "$", 7);
+        ? null : RowFilter.regexFilter("(?i)^" + selectedStatus + "$", 8);
 
-      if (stateF == null && statusF == null) {
-        sorter.setRowFilter(null);
-      } else if (stateF == null) {
-        sorter.setRowFilter(statusF);
-      } else if (statusF == null) {
-        sorter.setRowFilter(stateF);
+      java.util.List<RowFilter<DefaultTableModel,Object>> filters = new java.util.ArrayList<>();
+
+      if (oStateF != null) filters.add(oStateF);
+      if (dStateF != null) filters.add(dStateF);
+      if (statusF != null) filters.add(statusF);
+      
+      if (filters.isEmpty()) {
+          sorter.setRowFilter(null);
       } else {
-        sorter.setRowFilter(RowFilter.andFilter(
-          java.util.Arrays.asList(stateF, statusF)
-        ));
+          sorter.setRowFilter(RowFilter.andFilter(filters));
       }
     };
 
-    stateFilter.addActionListener(filterAction);
+    oStateFilter.addActionListener(filterAction);
+    dStateFilter.addActionListener(filterAction);
     statusFilter.addActionListener(filterAction);
 
     //filter bar
     JPanel filterPanel = new JPanel();
     filterPanel.setBackground(new Color(10, 12, 28));
-    filterPanel.add(new JLabel("Filter by State:") {{
+    filterPanel.add(new JLabel("Filter by Origin:") {{
       setForeground(new Color(255, 210, 50));
     }});
-    filterPanel.add(stateFilter);
+    filterPanel.add(oStateFilter);
+    
+    filterPanel.add(new JLabel("Filter by Destination:") {{
+      setForeground(new Color(255, 210, 50));
+    }});
+    filterPanel.add(dStateFilter);
+    
     filterPanel.add(new JLabel("  Filter by Status:") {{
       setForeground(new Color(255, 210, 50));
     }});
