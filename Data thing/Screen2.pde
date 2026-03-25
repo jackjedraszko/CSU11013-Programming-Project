@@ -139,6 +139,44 @@ class Screen2 extends Screen
     airports.add(new Airport("PHL", 763, 197));
     airports.add(new Airport("SLC", 212, 215));
     airports.add(new Airport("SAN", 90, 340));
+    airports.add(new Airport("ABQ", 275, 329));
+    airports.add(new Airport("ALB", 770, 139));
+    airports.add(new Airport("ANC", 115, 490));
+    airports.add(new Airport("ADQ", 100, 510));
+    airports.add(new Airport("AUS", 420, 430));
+    airports.add(new Airport("AZA", 200, 350));
+    airports.add(new Airport("BDL", 805, 155));
+    airports.add(new Airport("BET", 78, 472));
+    airports.add(new Airport("BHM", 610, 360));
+    
+    // NEED TO FINE TUNE THE LOCATION FROM HERE DOWN
+    airports.add(new Airport("BNA", 600, 315));
+    airports.add(new Airport("BWI", 760, 225));
+    airports.add(new Airport("CDV", 160, 60));
+    airports.add(new Airport("CHS", 720, 340));
+    airports.add(new Airport("CLE", 670, 210));
+    airports.add(new Airport("CRP", 430, 480));
+    airports.add(new Airport("EWR", 790, 190));
+    airports.add(new Airport("GEG", 120, 110));
+    airports.add(new Airport("IND", 590, 270));
+    airports.add(new Airport("KTN", 130, 120));
+    airports.add(new Airport("KOA", 260, 470));
+    airports.add(new Airport("LGB", 100, 345));
+    airports.add(new Airport("LIH", 250, 460));
+    airports.add(new Airport("MYR", 740, 320));
+    airports.add(new Airport("OAK", 45, 240));
+    airports.add(new Airport("OGG", 300, 480));
+    airports.add(new Airport("PBI", 750, 460));
+    airports.add(new Airport("PDX", 70, 85));
+    airports.add(new Airport("PSG", 115, 115));
+    airports.add(new Airport("RDU", 720, 290));
+    airports.add(new Airport("SAV", 705, 355));
+    airports.add(new Airport("SIT", 105, 105));
+    airports.add(new Airport("SJC", 50, 255));
+    airports.add(new Airport("SMF", 60, 220));
+    airports.add(new Airport("TPA", 690, 445));
+    airports.add(new Airport("WRG", 120, 130));
+    airports.add(new Airport("YAK", 95, 95));
   }
   
   void calculateTraffic()
