@@ -55,13 +55,7 @@ void mousePressed() {
     return;
   }
 
-  if (currentScreen == screen4) {
-    ((Screen4) currentScreen).clicked(mouseX, mouseY);
-    return;
-  }
-
-
-  // Dark mode toggle
+  // === Dark mode toggle ===
   int tx = width - 100;
   int ty = 30;
   if (mouseX > tx && 
@@ -72,6 +66,10 @@ void mousePressed() {
     return;
   }
 
+if (currentScreen == screen4) {
+    ((Screen4) currentScreen).clicked(mouseX, mouseY);
+    return;
+  }
 
   Widget pressed = currentScreen.getEvent(mouseX, mouseY);
 
