@@ -18,7 +18,7 @@ class Screen3 extends Screen {
 
     // count data once in constructor
     for (String s : datareader.cancelled) {
-      if (s.trim().equals("1")) cancelled++;
+      if (s.trim().equals("1") || s.trim().equals("1.00")) cancelled++;
       else onTime++;
     }
     
