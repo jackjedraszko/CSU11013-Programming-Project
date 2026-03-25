@@ -22,6 +22,7 @@ class Screen4 extends Screen {
   Screen4(color bgColor, color btnColor, DataReader dr) {
     super(bgColor);
     this.dr = dr;
+    this.btnColor = btnColor;
   }
 
 
@@ -56,6 +57,7 @@ String formatTime(String raw) {
 
       data[i][0] = dr.flightNumber.get(i);
       data[i][1] = dr.flightDate.get(i).replace(" 00:00", "");
+      data[i][1] = dr.flightDate.get(i).replace(" 12:00:00 AM", "");
       data[i][2] = dr.originCity.get(i) + " (" + dr.originAirport.get(i) + ")";
       data[i][3] = dr.originState.get(i);
       data[i][4] = dr.destinationCity.get(i) + " (" + dr.destinationAirport.get(i) + ")";
