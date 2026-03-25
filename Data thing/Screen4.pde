@@ -1,4 +1,3 @@
-// ==== Screen4: Table ====
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -23,7 +22,6 @@ class Screen4 extends Screen {
   Screen4(color bgColor, color btnColor, DataReader dr) {
     super(bgColor);
     this.dr = dr;
-    this.btnColor = btnColor;
   }
 
 
@@ -52,12 +50,12 @@ String formatTime(String raw) {
 
     for (int i = 0; i < n; i++) {
       String status;
-      if(dr.cancelled.get(i).equals("1.00")) status = "CANCELLED";
-      else if(dr.diverted.get(i).equals("1") || dr.diverted.get(i).equals("1.00"))  status = "DIVERTED";
+      if(dr.cancelled.get(i).equals("1")) status = "CANCELLED";
+      else if(dr.diverted.get(i).equals("1"))  status = "DIVERTED";
       else status = "ON TIME";
 
       data[i][0] = dr.flightNumber.get(i);
-      data[i][1] = dr.flightDate.get(i).replace(" 00:00", "").replace(" 12:00:00 AM", "");
+      data[i][1] = dr.flightDate.get(i).replace(" 00:00", "");
       data[i][2] = dr.originCity.get(i) + " (" + dr.originAirport.get(i) + ")";
       data[i][3] = dr.originState.get(i);
       data[i][4] = dr.destinationCity.get(i) + " (" + dr.destinationAirport.get(i) + ")";
