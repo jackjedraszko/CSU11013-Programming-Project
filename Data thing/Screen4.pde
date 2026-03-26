@@ -198,6 +198,14 @@ class Screen4 extends Screen {
     int di = 1;
     for (String s : dStateSet) dStates[di++] = s;
 
+    java.util.TreeSet<String> dateSet = new java.util.TreeSet<>();
+    for (String s : dr.flightDate) dateSet.add(s);
+    String[] date = new String[dateSet.size() + 1];
+    date[0] = "All Dates";
+    int sp = 1;
+    for (String s : dateSet) date[sp++] = s.replace(" 00:00", "");
+
+    JComboBox<String> dateFilter  = new JComboBox<>(date);
     final JComboBox oStateFilter = new JComboBox(oStates);
     final JComboBox dStateFilter = new JComboBox(dStates);
     final JComboBox statusFilter = new JComboBox(new String[]{
@@ -213,6 +221,8 @@ class Screen4 extends Screen {
     dStateFilter.setBackground(dropBg);  dStateFilter.setForeground(dropFg);
     statusFilter.setBackground(dropBg);  statusFilter.setForeground(dropFg);
     delayFilter.setBackground(dropBg);   delayFilter.setForeground(dropFg);
+    dateFilter.setBackground(new Color(25, 28, 55));
+    dateFilter.setForeground(new Color(255, 210, 50));
 
     // Filter action (no lambdas — Processing compatible) 
     java.awt.event.ActionListener filterAction = new java.awt.event.ActionListener() {
@@ -220,11 +230,14 @@ class Screen4 extends Screen {
         String selOState = (String) oStateFilter.getSelectedItem();
         String selDState = (String) dStateFilter.getSelectedItem();
         String selStatus = (String) statusFilter.getSelectedItem();
+        String selDate = (String) dateFilter.getSelectedItem();
         String selDelay  = (String) delayFilter.getSelectedItem();
 
         List<RowFilter<DefaultTableModel, Object>> filters =
           new ArrayList<RowFilter<DefaultTableModel, Object>>();
 
+        if (!selDate.equals("All Dates"))
+          filters.add(RowFilter.regexFilter("(?i)^" + selDate + "$", 1));
         if (!selOState.equals("All Origins"))
           filters.add(RowFilter.regexFilter("(?i)^" + selOState + "$", 3));
         if (!selDState.equals("All Destinations"))
@@ -268,6 +281,7 @@ class Screen4 extends Screen {
     dStateFilter.addActionListener(filterAction);
     statusFilter.addActionListener(filterAction);
     delayFilter.addActionListener(filterAction);
+    dateFilter.addActionListener(filterAction);
 
     // FILTER BAR
     JPanel filterPanel = new JPanel();
@@ -287,6 +301,11 @@ class Screen4 extends Screen {
     sLabel.setForeground(dropFg);
     filterPanel.add(sLabel);
     filterPanel.add(statusFilter);
+
+    filterPanel.add(new JLabel("  Filter by Date:") {{
+      setForeground(new Color(255, 210, 50));
+    }});
+    filterPanel.add(dateFilter);
 
     JLabel delLabel = new JLabel("  Delay:");
     delLabel.setForeground(dropFg);
