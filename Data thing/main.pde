@@ -70,6 +70,9 @@ if (currentScreen == screen4) {
     ((Screen4) currentScreen).clicked(mouseX, mouseY);
     return;
   }
+if (currentScreen == screen2) {
+  ((Screen2) currentScreen).mousePressed();
+}
 
   Widget pressed = currentScreen.getEvent(mouseX, mouseY);
 
