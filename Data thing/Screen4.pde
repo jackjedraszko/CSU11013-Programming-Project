@@ -1,3 +1,4 @@
+// ==== Screen4: Tables ====
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -25,6 +26,7 @@ class Screen4 extends Screen {
   Screen4(color bgColor, color btnColor, DataReader dr) {
     super(bgColor);
     this.dr = dr;
+    this.btnColor = btnColor;
   }
 
   String formatTime(String raw) {
