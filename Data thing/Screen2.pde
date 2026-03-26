@@ -8,11 +8,21 @@ class Screen2 extends Screen
   float maxTraffic = 1;
   float minBubble = 8;
   float maxBubble = 45;
+  float tableX = 30;
+  float tableY = 100;
+  float rowHeight = 30;
+  int tableColor = 0;
+  int tableDarkColor = 255;
+  int tableFontSize = 20;
 
   ArrayList<Airport> airports = new ArrayList<Airport>();
   Airport hooveredAirport = null;
   DataReader dr;
-
+  boolean showConnections = false;
+  ArrayList<Connection> connections = new ArrayList<Connection>();
+  float maxConnections = 1;
+  ArrayList<Airport> topAirports = new ArrayList<Airport>();
+  Widget toggleMapButton;
   Screen2(color bgColor, color btnColor, DataReader dr)
   {
     super(bgColor);
@@ -24,65 +34,127 @@ class Screen2 extends Screen
     setupAirports();
     calculateTraffic();
     calculateMaxTraffic();
+    calculateConnections();
+    calculateTopAirports();
 
     for (Widget w : widgets)
     {
       w.hoverable = true;
     }
+    toggleMapButton = new Widget(width - 220, height - 70, 200, 40,
+    "Show Connections", btnColor);
+    widgets.add(toggleMapButton);
   }
 
-  void draw()
-  {
+   void draw()
+   {
     super.draw();
-
-
+  
     float mapX = width/2 - 430;
     float mapY = height/2 - 250;
-   
-
-    if (USmap != null)
-    {
+  
+    // ==== Draw map ====
+    if (USmap != null) {
       image(USmap, mapX, mapY, 900, 540);
     }
-
+  
+    // ==== Detect hovered airport ====
     hooveredAirport = null;
     float closestDist = 999999;
     float hooverRadius = 40;
-       
-    for (Airport a : airports)
-    {
+  
+    for (Airport a : airports) {
       float screenX = mapX + a.x;
       float screenY = mapY + a.y;
-
+  
       float d = dist(mouseX, mouseY, screenX, screenY);
-
-      if (d < closestDist && d < hooverRadius)
-      {
+  
+      if (d < closestDist && d < hooverRadius) {
         closestDist = d;
         hooveredAirport = a;
       }
     }
-    for (Airport a : airports)
-    {
-      boolean hoovered = (a == hooveredAirport);
-      a.draw(mapX, mapY, hoovered);
+  
+    // ==== Draw connections or heatmap ====
+    if (showConnections) {
+      int threshold = 50;
+  
+      // Draw connections
+      for (Connection c : connections) {
+        if (c.count > threshold) {
+          // Dark mode: white lines; Light mode: darker gray
+          stroke(darkMode ? color(255, 180) : color(50, 180));
+          float normalized = (float)c.count / maxConnections;
+          float thickness = 1 + normalized * 6;
+          strokeWeight(thickness);
+          line(mapX + c.a1.x, mapY + c.a1.y, mapX + c.a2.x, mapY + c.a2.y);
+        }
+      }
+  
+      // Draw airports on top
+      for (Airport a : airports) {
+        a.draw(mapX, mapY, false);
+      }
+    } else {
+      // Draw heatmap
+      for (Airport a : airports) {
+        boolean hovered = (a == hooveredAirport);
+        a.draw(mapX, mapY, hovered);
+      }
     }
-
+  
+    // ==== Draw top 10 table ====
+    float tableX = 30;
+    float tableY = 100;
+    float rowHeight = 30;
+    fill(darkMode ? 255 : 0);
+    textSize(20);
+    textAlign(LEFT, CENTER);
+  
+    if (showConnections) {
+      ArrayList<Connection> top10 = getTopConnections(10);
+      text("Top 10 Airport Pairs:", tableX, tableY - rowHeight);
+  
+      for (int i = 0; i < top10.size(); i++) {
+        Connection c = top10.get(i);
+        String label = (i + 1) + ". " + c.a1.code + " - " + c.a2.code + " : " + c.count;
+        text(label, tableX, tableY + i * rowHeight);
+      }
+    } else {
+      text("Top 10 Airports:", tableX, tableY - rowHeight);
+  
+      for (int i = 0; i < topAirports.size(); i++) {
+        Airport a = topAirports.get(i);
+        String label = (i + 1) + ". " + a.code + "  " + a.traffic + " flights";
+        text(label, tableX, tableY + i * rowHeight);
+      }
+    }
+  
+    // ==== Draw title ====
     fill(darkMode ? color(255) : color(58, 140, 110));
     textSize(60);
     textAlign(CENTER, CENTER);
-    text("Map", width/2, 35);
-    
-    if (hooveredAirport != null)
-    {
-      fill(darkMode ? color(255) : color(58,140,110));
+  
+    String title = showConnections ? "Airport Connections Map" : "Airports Heatmap";
+    text(title, width/2, 35);
+  
+    // ==== Show hovered airport info for heatmap ====
+    if (!showConnections && hooveredAirport != null) {
+      fill(darkMode ? color(255) : color(58, 140, 110));
       textSize(30);
       textAlign(CENTER, CENTER);
-
-      String associatedFlights = hooveredAirport.code + "  |  Associated flights: " + hooveredAirport.traffic;
-
-      text(associatedFlights, width/2, 100);
+      String info = hooveredAirport.code + "  |  Associated flights: " + hooveredAirport.traffic;
+      text(info, width/2, 100);
     }
+  }
+  ArrayList<Connection> getTopConnections(int n) {
+  ArrayList<Connection> sorted = new ArrayList<Connection>(connections);
+  sorted.sort((a, b) -> b.count - a.count); // descending by count
+  ArrayList<Connection> topN = new ArrayList<Connection>();
+  for (int i = 0; i < min(n, sorted.size()); i++) {
+    topN.add(sorted.get(i));
+  }
+  return topN;
   }
   void calculateMaxTraffic()
   {
@@ -94,6 +166,74 @@ class Screen2 extends Screen
       {
         maxTraffic = a.traffic;
       }
+    }
+  }
+  void calculateConnections()
+  {
+    ArrayList<String> origins = dr.originAirport;
+    ArrayList<String> dests = dr.destinationAirport;
+  
+    for (int i = 0; i < origins.size(); i++)
+    {
+      String o = origins.get(i).trim().toUpperCase();
+      String d = dests.get(i).trim().toUpperCase();
+  
+      Airport originAirport = null;
+      Airport destAirport = null;
+  
+      for (Airport a : airports)
+      {
+        if (a.code.equals(o)) originAirport = a;
+        if (a.code.equals(d)) destAirport = a;
+      }
+  
+      if (originAirport != null && destAirport != null)
+      {
+        Connection existing = null;
+  
+        for (Connection c : connections)
+        {
+          boolean sameDirection =
+            (c.a1 == originAirport && c.a2 == destAirport);
+  
+          boolean oppositeDirection =
+            (c.a1 == destAirport && c.a2 == originAirport);
+  
+          if (sameDirection || oppositeDirection)
+          {
+            existing = c;
+            break;
+          }
+        }
+  
+        if (existing != null)
+        {
+          existing.count++;
+        }
+        else
+        {
+          connections.add(new Connection(originAirport, destAirport));
+        }
+      }
+    }
+  
+    maxConnections = 1;
+  
+    for (Connection c : connections)
+    {
+      if (c.count > maxConnections)
+        maxConnections = c.count;
+    }
+  }
+  void mousePressed()
+  {
+    if (mouseX > toggleMapButton.x &&
+        mouseX < toggleMapButton.x + toggleMapButton.w &&
+        mouseY > toggleMapButton.y &&
+        mouseY < toggleMapButton.y + toggleMapButton.h)
+    {
+      showConnections = !showConnections;
+      toggleMapButton.label = showConnections ? "Hide Connections" : "Show Connections";
     }
   }
   class Airport
@@ -230,4 +370,52 @@ class Screen2 extends Screen
       }
     }
   }
+  void calculateTopAirports()
+  {
+    ArrayList<Airport> sortedAirports = new ArrayList<Airport>(airports);
+
+    // Sort descending by traffic
+    sortedAirports.sort((a, b) -> b.traffic - a.traffic);
+
+    // Take top 10
+    topAirports.clear();
+    for (int i = 0; i < min(10, sortedAirports.size()); i++) {
+        topAirports.add(sortedAirports.get(i));
+    }
+  }
+  class Connection
+  {
+      Airport a1;
+      Airport a2;
+      int count;
+    
+      Connection(Airport a1, Airport a2)
+      {
+        this.a1 = a1;
+        this.a2 = a2;
+        this.count = 1;
+      }
+    
+      void draw(float mapX, float mapY)
+      {
+        float normalized = (float)count / maxConnections;
+        float thickness = 1 + normalized * 6;
+    
+        if (darkMode)
+        {
+          stroke(255, 160);
+        }
+        else
+        {
+          stroke(45, 120);
+        }
+        
+        strokeWeight(thickness);
+    
+        line(
+          mapX + a1.x, mapY + a1.y,
+          mapX + a2.x, mapY + a2.y
+        );
+      }
+   }
 }
