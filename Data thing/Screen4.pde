@@ -52,7 +52,7 @@ class Screen4 extends Screen {
       int actualMins = (act   / 100) * 60 + (act   % 100);
 
       int diff = actualMins - schedMins;
-      // Handle midnight wrap-around (e.g. scheduled 23:50, actual 00:10)
+      // Handle midnight wrap around (e.g. scheduled 23:50, actual 00:10)
       if (diff < -120) diff += 24 * 60;
       if (diff >  720) diff -= 24 * 60;
 
@@ -132,7 +132,7 @@ class Screen4 extends Screen {
     table.setGridColor(new Color(45, 48, 90));
     table.setSelectionBackground(new Color(74, 111, 165));
 
-    // Hide the raw-minutes column from the view
+    // Hide the minutes column from the view
     table.getColumnModel().getColumn(10).setMinWidth(0);
     table.getColumnModel().getColumn(10).setMaxWidth(0);
     table.getColumnModel().getColumn(10).setWidth(0);
@@ -143,19 +143,19 @@ class Screen4 extends Screen {
     tableHeader.setForeground(new Color(255, 210, 50));
     tableHeader.setFont(new Font("SansSerif", Font.BOLD, 13));
 
-    // Sorter — default: sort by delay descending (worst first)
+    // Sorter default: sort by delay ascending
     final TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<DefaultTableModel>(model);
     table.setRowSorter(sorter);
 
     List<RowSorter.SortKey> sortKeys = new ArrayList<RowSorter.SortKey>();
-    sortKeys.add(new RowSorter.SortKey(10, javax.swing.SortOrder.DESCENDING));
+    sortKeys.add(new RowSorter.SortKey(10, javax.swing.SortOrder.ASCENDING));
     sorter.setSortKeys(sortKeys);
     sorter.sort();
 
-    // Color-coded Delay cell renderer 
+    // Color-coded Delay  
     table.getColumnModel().getColumn(9).setCellRenderer(new DefaultTableCellRenderer() {
-      public Component getTableCellRendererComponent(
-          JTable t, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+      public Component getTableCellRendererComponent(JTable t, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+        
         super.getTableCellRendererComponent(t, value, isSelected, hasFocus, row, col);
         String txt = value == null ? "" : value.toString();
         int modelRow = t.convertRowIndexToModel(row);
@@ -205,7 +205,7 @@ class Screen4 extends Screen {
     String[] date = new String[dateSet.size() + 1];
     date[0] = "All Dates";
     int sp = 1;
-    for (String s : dateSet) date[sp++] = s.replace(" 00:00", "");
+    for (String s : dateSet) date[sp++] = s.replace(" 00:00", "").replace(" 12:00:00 AM", "");
 
     JComboBox<String> dateFilter  = new JComboBox<>(date);
     final JComboBox oStateFilter = new JComboBox(oStates);
@@ -226,7 +226,7 @@ class Screen4 extends Screen {
     dateFilter.setBackground(new Color(25, 28, 55));
     dateFilter.setForeground(new Color(255, 210, 50));
 
-    // Filter action (no lambdas — Processing compatible) 
+    // Filter action
     java.awt.event.ActionListener filterAction = new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         String selOState = (String) oStateFilter.getSelectedItem();
