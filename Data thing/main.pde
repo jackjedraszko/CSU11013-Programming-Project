@@ -43,6 +43,7 @@ void draw() {
 }
 
 
+// ==== Mouse Events ====
 void mousePressed() {
 
   if (mouseX > 20 && mouseX < 80 && mouseY > 10 && mouseY < 60) {
@@ -60,13 +61,20 @@ void mousePressed() {
     return;
   }
 
-if (currentScreen == screen4) {
+  if (currentScreen == screen4)
+  {
     ((Screen4) currentScreen).clicked(mouseX, mouseY);
     return;
   }
-if (currentScreen == screen2) {
-  ((Screen2) currentScreen).mousePressed();
-}
+  if (currentScreen == screen3)
+  {
+    ((Screen3) currentScreen).clicked(mouseX, mouseY);
+    return;
+  }
+  if (currentScreen == screen2)
+  {
+    ((Screen2) currentScreen).mousePressed();
+  }
 
   Widget pressed = currentScreen.getEvent(mouseX, mouseY);
 
