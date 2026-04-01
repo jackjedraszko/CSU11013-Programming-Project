@@ -113,20 +113,20 @@ class Screen2 extends Screen
   
     if (showConnections) {
       ArrayList<Connection> top10 = getTopConnections(10);
-      text("Top 10 Airport Pairs:", tableX, tableY - rowHeight);
+      text("Top 10 Airport Pairs:", tableX, tableY - rowHeight + 80);
   
       for (int i = 0; i < top10.size(); i++) {
         Connection c = top10.get(i);
         String label = (i + 1) + ". " + c.a1.code + " - " + c.a2.code + " : " + c.count;
-        text(label, tableX, tableY + i * rowHeight);
+        text(label, tableX, tableY + i * rowHeight + 90);
       }
     } else {
-      text("Top 10 Airports:", tableX, tableY - rowHeight);
+      text("Top 10 Airports:", tableX, tableY - rowHeight + 80);
   
       for (int i = 0; i < topAirports.size(); i++) {
         Airport a = topAirports.get(i);
         String label = (i + 1) + ". " + a.code + "  " + a.traffic + " flights";
-        text(label, tableX, tableY + i * rowHeight);
+        text(label, tableX, tableY + i * rowHeight + 90);
       }
     }
   
