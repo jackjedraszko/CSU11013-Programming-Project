@@ -16,7 +16,6 @@ boolean darkMode = false;
 PImage logo;
 Table table;
 
-// ==== Setup ====
 void setup() {
   size(1300, 700);
   textAlign(CENTER, CENTER);
@@ -25,13 +24,11 @@ void setup() {
 
   table = new Table();
 
-  // === Data ===
   datareader = new DataReader();
   datareader.sortData();
   println(datareader.originState.toString());
 
 
-  // --- Screens ---
   screen1 = new Screen1(color(#f5f0eb), color(#f5f0eb));
   screen2 = new Screen2(color(#f5f0eb), color(#f5f0eb), datareader);
   screen3 = new Screen3(color(#f5f0eb), color(#f5f0eb));
@@ -41,13 +38,11 @@ void setup() {
 }
 
 
-// ==== Draw ====
 void draw() {
   currentScreen.draw();
 }
 
 
-// ==== Mouse Events ====
 void mousePressed() {
 
   if (mouseX > 20 && mouseX < 80 && mouseY > 10 && mouseY < 60) {
@@ -55,7 +50,6 @@ void mousePressed() {
     return;
   }
 
-  // === Dark mode toggle ===
   int tx = width - 100;
   int ty = 30;
   if (mouseX > tx && 
@@ -94,7 +88,6 @@ void mouseMoved() {
 }
 
 
-// ==== Helper: changeType ====
 public int[] changeType(String[] values) {
   int[] temp = new int[values.length];
 
