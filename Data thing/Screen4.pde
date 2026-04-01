@@ -43,7 +43,7 @@ class Screen4 extends Screen {
 
   // Returns delay in minutes (positive = late, 0 = on time, -1 = cancelled/no data)
   int computeDelayMinutes(String scheduled, String actual, String cancelled, String diverted) {
-    if (cancelled.equals("1") || diverted.equals("1")) return -1;
+    if (cancelled.equals("1") || diverted.equals("1") || cancelled.equals("1.00") || diverted.equals("1.00")) return -1;
     try {
       int sched   = Integer.parseInt(scheduled.trim());
       int act     = Integer.parseInt(actual.trim());
@@ -63,8 +63,8 @@ class Screen4 extends Screen {
   }
 
   String formatDelay(int minutes, String cancelled, String diverted) {
-    if (cancelled.equals("1")) return "CANCELLED";
-    if (diverted.equals("1"))  return "DIVERTED";
+    if (cancelled.equals("1") || cancelled.equals("1.00")) return "CANCELLED";
+    if (diverted.equals("1") || diverted.equals("1.00"))  return "DIVERTED";
     if (minutes == -1)         return "N/A";
     if (minutes <= 0)          return "On Time (" + Math.abs(minutes) + "m early)";
     int h = minutes / 60;
@@ -97,8 +97,8 @@ class Screen4 extends Screen {
       int delayMins = computeDelayMinutes(sched, act, canc, div);
 
       String status;
-      if (canc.equals("1"))     status = "CANCELLED";
-      else if (div.equals("1")) status = "DIVERTED";
+      if (canc.equals("1") || canc.equals("1.00"))     status = "CANCELLED";
+      else if (div.equals("1") || div.equals("1.00")) status = "DIVERTED";
       else if (delayMins > 0)   status = "DELAYED";
       else                      status = "ON TIME";
 
