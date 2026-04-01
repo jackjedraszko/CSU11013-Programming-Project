@@ -1,4 +1,4 @@
-// ==== Screen3: Charts with Working Filter Button + Clean Layout ====
+// ==== Screen3: Charts with Filters
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
