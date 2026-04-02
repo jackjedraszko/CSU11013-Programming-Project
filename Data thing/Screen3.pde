@@ -1,246 +1,270 @@
-// ==== Screen3: Charts
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-
+// ==== Screen3: Charts ====
 class Screen3 extends Screen {
   color btnColor;
 
+  // chart data
   int cancelled = 0, onTime = 0;
   String[] topCities;
   int[] cityCounts;
 
-  JFrame controlFrame;
-  JComboBox<String> stateFilter;
-  JComboBox<String> statusFilter;
-  JComboBox<String> originAirportFilter;
-  JComboBox<String> destinationAirportFilter;
+  // filter options
+  String[] allStates, allOrigins, allDests;
+  String[] statusOptions = { "All Statuses", "ON TIME", "CANCELLED" };
 
-  boolean filtersOpen = false;
+  // selected index for each dropdown
+  int selectedState = 0, selectedStatus = 0, selectedOrigin = 0, selectedDest = 0;
 
-  float bx, by, bw = 180, bh = 45;
+  // dropdown layout
+  int openDropdown  = -1; // -1 = none open
+  int maxVisible    = 6;
+  int[] scrollOffset = { 0, 0, 0, 0 };
+  int[] ddX         = { 220, 430, 640, 850 };
+  int ddY = 15, ddW = 200, ddH = 36;
 
   Screen3(color bgColor, color btnColor) {
     super(bgColor);
     this.btnColor = btnColor;
 
-    setupFilters();
-
-    computeCancellationStatsFiltered();
-    analyzeDestinationCitiesFiltered();
+    buildFilterArrays();
+    recompute();
   }
 
-  void setupFilters() {
-
-    java.util.TreeSet<String> stateSet = new java.util.TreeSet<String>();
-    for (String s : datareader.originState) stateSet.add(s);
-
-    String[] states = new String[stateSet.size() + 1];
-    states[0] = "All States";
-    int i = 1;
-    for (String s : stateSet) states[i++] = s;
-
-    stateFilter = new JComboBox<>(states);
-
-    statusFilter = new JComboBox<>(new String[]{
-      "All Statuses", "ON TIME", "CANCELLED"
-    });
-
+  // === build filter option arrays from data ===
+  void buildFilterArrays() {
+    java.util.TreeSet<String> stateSet  = new java.util.TreeSet<String>();
     java.util.TreeSet<String> originSet = new java.util.TreeSet<String>();
-    for (String s : datareader.originAirport) originSet.add(s);
+    java.util.TreeSet<String> destSet   = new java.util.TreeSet<String>();
 
-    String[] origins = new String[originSet.size() + 1];
-    origins[0] = "All Origins";
-    i = 1;
-    for (String s : originSet) origins[i++] = s;
-
-    originAirportFilter = new JComboBox<>(origins);
-
-    java.util.TreeSet<String> destSet = new java.util.TreeSet<String>();
+    for (String s : datareader.originState)        stateSet.add(s);
+    for (String s : datareader.originAirport)      originSet.add(s);
     for (String s : datareader.destinationAirport) destSet.add(s);
 
-    String[] dests = new String[destSet.size() + 1];
-    dests[0] = "All Destinations";
-    i = 1;
-    for (String s : destSet) dests[i++] = s;
-
-    destinationAirportFilter = new JComboBox<>(dests);
-
-    ActionListener filterAction = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        computeCancellationStatsFiltered();
-        analyzeDestinationCitiesFiltered();
-      }
-    };
-
-    stateFilter.addActionListener(filterAction);
-    statusFilter.addActionListener(filterAction);
-    originAirportFilter.addActionListener(filterAction);
-    destinationAirportFilter.addActionListener(filterAction);
+    allStates  = buildArray("All States",        stateSet);
+    allOrigins = buildArray("All Origins",       originSet);
+    allDests   = buildArray("All Destinations",  destSet);
   }
 
-  void openChartControls() {
-
-    if (filtersOpen) {
-      controlFrame.toFront();
-      return;
-    }
-
-    controlFrame = new JFrame("Chart Filters");
-
-    JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
-    panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-    panel.add(new JLabel("State:"));
-    panel.add(stateFilter);
-
-    panel.add(new JLabel("Status:"));
-    panel.add(statusFilter);
-
-    panel.add(new JLabel("Origin Airport:"));
-    panel.add(originAirportFilter);
-
-    panel.add(new JLabel("Destination Airport:"));
-    panel.add(destinationAirportFilter);
-
-    controlFrame.add(panel);
-
-    controlFrame.setSize(350, 220);
-    controlFrame.setLocationRelativeTo(null);
-    controlFrame.setVisible(true);
-
-    filtersOpen = true;
-
-    controlFrame.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        filtersOpen = false;
-      }
-    });
+  String[] buildArray(String firstItem, java.util.TreeSet<String> set) {
+    String[] arr = new String[set.size() + 1];
+    arr[0] = firstItem;
+    int i = 1;
+    for (String s : set) arr[i++] = s;
+    return arr;
   }
 
-  void computeCancellationStatsFiltered() {
+  // === recompute charts based on active filters ===
+  void recompute() {
     cancelled = 0;
-    onTime = 0;
-
-    String sState = (String) stateFilter.getSelectedItem();
-    String sStatus = (String) statusFilter.getSelectedItem();
-    String sOrigin = (String) originAirportFilter.getSelectedItem();
-    String sDest = (String) destinationAirportFilter.getSelectedItem();
-
-    for (int i = 0; i < datareader.cancelled.size(); i++) {
-
-      String state = datareader.originState.get(i);
-      String origin = datareader.originAirport.get(i);
-      String dest = datareader.destinationAirport.get(i);
-      String canc = datareader.cancelled.get(i);
-
-      String status = (canc.equals("1") || canc.equals("1.00")) ? "CANCELLED" : "ON TIME";
-
-      if (!sState.equals("All States") && !state.equals(sState)) continue;
-      if (!sStatus.equals("All Statuses") && !status.equals(sStatus)) continue;
-      if (!sOrigin.equals("All Origins") && !origin.equals(sOrigin)) continue;
-      if (!sDest.equals("All Destinations") && !dest.equals(sDest)) continue;
-
-      if (status.equals("CANCELLED")) cancelled++;
-      else onTime++;
-    }
-  }
-
-  void analyzeDestinationCitiesFiltered() {
-
-    String sState = (String) stateFilter.getSelectedItem();
-    String sStatus = (String) statusFilter.getSelectedItem();
-    String sOrigin = (String) originAirportFilter.getSelectedItem();
-    String sDest = (String) destinationAirportFilter.getSelectedItem();
+    onTime    = 0;
 
     ArrayList<String> cityNames = new ArrayList<String>();
-    ArrayList<Integer> counts = new ArrayList<Integer>();
+    ArrayList<Integer> counts   = new ArrayList<Integer>();
 
-    for (int i = 0; i < datareader.destinationCity.size(); i++) {
-
-      String state = datareader.originState.get(i);
+    for (int i = 0; i < datareader.cancelled.size(); i++) {
+      String state  = datareader.originState.get(i);
       String origin = datareader.originAirport.get(i);
-      String dest = datareader.destinationAirport.get(i);
-      String canc = datareader.cancelled.get(i);
+      String dest   = datareader.destinationAirport.get(i);
+      String canc   = datareader.cancelled.get(i);
+      boolean isCancelled = canc.equals("1") || canc.equals("1.00");
+      String status = isCancelled ? "CANCELLED" : "ON TIME";
 
-      String status = (canc.equals("1") || canc.equals("1.00")) ? "CANCELLED" : "ON TIME";
+      // apply filters
+      if (selectedState  > 0 && !state.equals(allStates[selectedState]))       continue;
+      if (selectedStatus > 0 && !status.equals(statusOptions[selectedStatus]))  continue;
+      if (selectedOrigin > 0 && !origin.equals(allOrigins[selectedOrigin]))     continue;
+      if (selectedDest   > 0 && !dest.equals(allDests[selectedDest]))           continue;
 
-      if (!sState.equals("All States") && !state.equals(sState)) continue;
-      if (!sStatus.equals("All Statuses") && !status.equals(sStatus)) continue;
-      if (!sOrigin.equals("All Origins") && !origin.equals(sOrigin)) continue;
-      if (!sDest.equals("All Destinations") && !dest.equals(sDest)) continue;
+      if (isCancelled) cancelled++;
+      else onTime++;
 
+      // count destination cities
       String city = datareader.destinationCity.get(i);
-
       int idx = cityNames.indexOf(city);
-      if (idx == -1) {
-        cityNames.add(city);
-        counts.add(1);
-      } else {
-        counts.set(idx, counts.get(idx) + 1);
-      }
+      if (idx == -1) { cityNames.add(city); counts.add(1); }
+      else counts.set(idx, counts.get(idx) + 1);
     }
 
-    String[] tempCities = cityNames.toArray(new String[0]);
-    int[] tempCounts = new int[counts.size()];
-    for (int i = 0; i < counts.size(); i++) tempCounts[i] = counts.get(i);
+    // sort cities by count and keep top 8
+    String[] tc = cityNames.toArray(new String[0]);
+    int[]    tn = new int[counts.size()];
+    for (int i = 0; i < counts.size(); i++) tn[i] = counts.get(i);
 
-    for (int i = 0; i < tempCounts.length - 1; i++) {
-      for (int j = 0; j < tempCounts.length - i - 1; j++) {
-        if (tempCounts[j] < tempCounts[j + 1]) {
-          int tc = tempCounts[j]; tempCounts[j] = tempCounts[j + 1]; tempCounts[j + 1] = tc;
-          String ts = tempCities[j]; tempCities[j] = tempCities[j + 1]; tempCities[j + 1] = ts;
+    for (int i = 0; i < tn.length - 1; i++)
+      for (int j = 0; j < tn.length - i - 1; j++)
+        if (tn[j] < tn[j+1]) {
+          int tmp = tn[j]; tn[j] = tn[j+1]; tn[j+1] = tmp;
+          String ts = tc[j]; tc[j] = tc[j+1]; tc[j+1] = ts;
+        }
+
+    int top   = min(8, tc.length);
+    topCities  = new String[top];
+    cityCounts = new int[top];
+    for (int i = 0; i < top; i++) { topCities[i] = tc[i]; cityCounts[i] = tn[i]; }
+  }
+
+  // === draw ===
+  void draw() {
+    super.draw();
+
+    // chart titles
+    fill(darkMode ? color(255) : color(58, 140, 110));
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("Cancellations", width/4, 90);
+    text("Top Destination Cities", (width/4)*3, 90);
+
+    // divider line between the two halves
+    stroke(darkMode ? color(80) : color(200));
+    strokeWeight(1);
+    line(width/2, 65, width/2, height - 30);
+
+    // pie chart — left half
+    pieChart(
+      width/4, height/2 + 20, 280,
+      new String[]{ "Cancelled", "On time" },
+      new color[] { color(#e07b54), color(#4a6fa5) },
+      new float[] { cancelled, onTime }
+    );
+
+    // bar chart — right half
+    barChart(width/2 + 40, 110, width - 30, height - 70, topCities, cityCounts);
+
+    // dropdowns drawn last so they appear on top of charts
+    drawDropdowns();
+  }
+
+  // === dropdown rendering ===
+  void drawDropdowns() {
+    String[][] options = { allStates, statusOptions, allOrigins, allDests };
+    int[]   selected   = { selectedState, selectedStatus, selectedOrigin, selectedDest };
+    String[] labels    = { "State", "Status", "Origin", "Destination" };
+
+    for (int d = 0; d < 4; d++) {
+      int x    = ddX[d];
+      color bg = darkMode ? color(#3a8c6e) : color(#4a6fa5);
+
+      // main button
+      noStroke();
+      fill(bg);
+      rect(x, ddY, ddW, ddH, 8);
+
+      fill(255);
+      textSize(13);
+      textAlign(LEFT, CENTER);
+      String label = selected[d] == 0 ? labels[d] : options[d][selected[d]];
+      if (label.length() > 21) label = label.substring(0, 19) + "..";
+      text(label, x + 10, ddY + ddH/2);
+
+      // arrow indicator
+      textAlign(RIGHT, CENTER);
+      text(openDropdown == d ? "▲" : "▼", x + ddW - 8, ddY + ddH/2);
+
+      // open dropdown list
+      if (openDropdown == d) {
+        int offset = scrollOffset[d];
+        int end    = min(offset + maxVisible, options[d].length);
+        int listH  = (end - offset) * ddH;
+
+        // list background
+        fill(darkMode ? color(30, 35, 60) : color(245));
+        rect(x, ddY + ddH, ddW, listH, 0, 0, 8, 8);
+
+        // items
+        for (int j = offset; j < end; j++) {
+          int itemY = ddY + ddH + (j - offset) * ddH;
+
+          // highlight selected item
+          if (j == selected[d]) {
+            noStroke();
+            fill(color(#e07b54));
+            rect(x, itemY, ddW, ddH);
+          }
+
+          fill(darkMode ? color(220) : color(30));
+          textSize(12);
+          textAlign(LEFT, CENTER);
+          String opt = options[d][j];
+          if (opt.length() > 23) opt = opt.substring(0, 21) + "..";
+          text(opt, x + 10, itemY + ddH/2);
+        }
+
+        // scroll arrows if list is longer than maxVisible
+        if (options[d].length > maxVisible) {
+          fill(darkMode ? color(150) : color(100));
+          textAlign(CENTER, CENTER);
+          textSize(11);
+          if (offset > 0)
+            text("▲", x + ddW - 12, ddY + ddH + 10);
+          if (end < options[d].length)
+            text("▼", x + ddW - 12, ddY + ddH + listH - 10);
+        }
+      }
+    }
+  }
+
+  // === mouse click ===
+  void clicked(int mx, int my) {
+    String[][] options = { allStates, statusOptions, allOrigins, allDests };
+
+    for (int d = 0; d < 4; d++) {
+      int x = ddX[d];
+
+      // click main button — toggle open/close
+      if (mx > x && mx < x + ddW && my > ddY && my < ddY + ddH) {
+        openDropdown = (openDropdown == d) ? -1 : d;
+        return;
+      }
+
+      // click inside open list
+      if (openDropdown == d) {
+        int offset = scrollOffset[d];
+        int end    = min(offset + maxVisible, options[d].length);
+        int listH  = (end - offset) * ddH;
+
+        // scroll up arrow
+        if (options[d].length > maxVisible && offset > 0 &&
+            mx > x + ddW - 24 && mx < x + ddW &&
+            my > ddY + ddH && my < ddY + ddH + 20) {
+          scrollOffset[d]--;
+          return;
+        }
+
+        // scroll down arrow
+        if (options[d].length > maxVisible && end < options[d].length &&
+            mx > x + ddW - 24 && mx < x + ddW &&
+            my > ddY + ddH + listH - 20 && my < ddY + ddH + listH) {
+          scrollOffset[d]++;
+          return;
+        }
+
+        // select item
+        for (int j = offset; j < end; j++) {
+          int itemY = ddY + ddH + (j - offset) * ddH;
+          if (mx > x && mx < x + ddW && my > itemY && my < itemY + ddH) {
+            if (d == 0) selectedState  = j;
+            if (d == 1) selectedStatus = j;
+            if (d == 2) selectedOrigin = j;
+            if (d == 3) selectedDest   = j;
+            openDropdown = -1;
+            recompute();
+            return;
+          }
         }
       }
     }
 
-    int top = min(8, tempCities.length);
-    topCities = new String[top];
-    cityCounts = new int[top];
-
-    for (int i = 0; i < top; i++) {
-      topCities[i] = tempCities[i];
-      cityCounts[i] = tempCounts[i];
-    }
+    // click outside — close dropdown
+    openDropdown = -1;
   }
 
-  void draw() {
-    super.draw();
-
-    bx = width/2 - bw/2;
-    by = 30;
-
-    fill(darkMode ? color(255) : color(58, 140, 110));
-    textSize(32);
-    textAlign(CENTER, CENTER);
-    text("Flight Cancellations", width/4, 150);
-
-    pieChart(width/4, height/2 + 20, 360,
-      new String[]{"Cancelled","On time"},
-      new color[]{color(#e07b54), color(#4a6fa5)},
-      new float[]{cancelled, onTime});
-
-    text("Top Destination Cities", (width/4)*3, 80);
-
-    barChart(width/2 + 40, 120, width - 40, height - 80, topCities, cityCounts);
-
-    drawFilterButton();
-  }
-
-  void drawFilterButton() {
-    fill(color(25, 28, 55));
-    rect(bx, by, bw, bh, 12);
-
-    fill(color(255, 210, 50));
-    textAlign(CENTER, CENTER);
-    textSize(16);
-    text("Open Filters", bx + bw/2, by + bh/2);
-  }
-
-  void clicked(int mx, int my) {
-    if (mx > bx && mx < bx + bw && my > by && my < by + bh) {
-      openChartControls();
-    }
+  // === mouse wheel scroll ===
+  void scrolled(int delta) {
+    if (openDropdown == -1) return;
+    String[][] options = { allStates, statusOptions, allOrigins, allDests };
+    int d = openDropdown;
+    scrollOffset[d] = constrain(
+      scrollOffset[d] + delta, 0,
+      max(0, options[d].length - maxVisible)
+    );
   }
 }
