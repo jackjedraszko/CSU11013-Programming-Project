@@ -61,14 +61,17 @@ void mousePressed() {
     return;
   }
 
-  if (currentScreen == screen4)
-  {
-    ((Screen4) currentScreen).clicked(mouseX, mouseY);
-    return;
+  if (currentScreen == screen1) {
+    ((Screen1) currentScreen).checkFileButtons(mouseX, mouseY);
   }
   if (currentScreen == screen3)
   {
     ((Screen3) currentScreen).clicked(mouseX, mouseY);
+    return;
+  }
+  if (currentScreen == screen4)
+  {
+    ((Screen4) currentScreen).clicked(mouseX, mouseY);
     return;
   }
   if (currentScreen == screen2)
@@ -88,6 +91,12 @@ void mousePressed() {
     } else {
       println("Button pressed: " + pressed.label);
     }
+  }
+}
+
+void mouseWheel(MouseEvent event) {
+  if (currentScreen == screen3) {
+    ((Screen3) currentScreen).scrolled(event.getCount());
   }
 }
 
