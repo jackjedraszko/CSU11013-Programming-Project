@@ -199,15 +199,23 @@ class Screen4 extends Screen {
     dStates[0] = "All Destinations";
     int di = 1;
     for (String s : dStateSet) dStates[di++] = s;
-
+    
     java.util.TreeSet<String> dateSet = new java.util.TreeSet<>();
-    for (String s : dr.flightDate) dateSet.add(s);
-    String[] date = new String[dateSet.size() + 1];
-    date[0] = "All Dates";
+    for (String s : dr.flightDate) dateSet.add(s.replace(" 00:00", "").replace(" 12:00:00 AM", ""));
+    
+    String[] dates = new String[dateSet.size() + 1];
+    dates[0] = "Start Date";
     int sp = 1;
-    for (String s : dateSet) date[sp++] = s.replace(" 00:00", "").replace(" 12:00:00 AM", "");
-
-    JComboBox<String> dateFilter  = new JComboBox<>(date);
+    for (String s : dateSet) dates[sp++] = s;
+    
+    String[] datesTo = new String[dateSet.size() + 1];
+    datesTo[0] = "End Date";
+    sp = 1;
+    for (String s : dateSet) datesTo[sp++] = s;
+    
+    
+    final JComboBox dateFrom = new JComboBox(dates);
+    final JComboBox dateTo   = new JComboBox(datesTo);
     final JComboBox oStateFilter = new JComboBox(oStates);
     final JComboBox dStateFilter = new JComboBox(dStates);
     final JComboBox statusFilter = new JComboBox(new String[]{
@@ -223,8 +231,8 @@ class Screen4 extends Screen {
     dStateFilter.setBackground(dropBg);  dStateFilter.setForeground(dropFg);
     statusFilter.setBackground(dropBg);  statusFilter.setForeground(dropFg);
     delayFilter.setBackground(dropBg);   delayFilter.setForeground(dropFg);
-    dateFilter.setBackground(new Color(25, 28, 55));
-    dateFilter.setForeground(new Color(255, 210, 50));
+    dateFrom.setBackground(dropBg);      dateFrom.setForeground(dropFg);
+    dateTo.setBackground(dropBg);      dateTo.setForeground(dropFg);
 
     // Filter action
     java.awt.event.ActionListener filterAction = new java.awt.event.ActionListener() {
@@ -232,14 +240,26 @@ class Screen4 extends Screen {
         String selOState = (String) oStateFilter.getSelectedItem();
         String selDState = (String) dStateFilter.getSelectedItem();
         String selStatus = (String) statusFilter.getSelectedItem();
-        String selDate = (String) dateFilter.getSelectedItem();
-        String selDelay  = (String) delayFilter.getSelectedItem();
-
+        String selDelay  = (String) delayFilter.getSelectedItem();        
+        String fromDate = (String) dateFrom.getSelectedItem();
+        String toDate   = (String) dateTo.getSelectedItem();
+        boolean hasFrom = !fromDate.equals("Start Date");
+        boolean hasTo   = !toDate.equals("End Date");
+        
         List<RowFilter<DefaultTableModel, Object>> filters =
-          new ArrayList<RowFilter<DefaultTableModel, Object>>();
+        new ArrayList<RowFilter<DefaultTableModel, Object>>();
+        
+        if (hasFrom || hasTo) {
+          filters.add(new RowFilter<DefaultTableModel, Object>() {
+            public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+              String rowDate = entry.getStringValue(1).trim();
+              if (hasFrom && rowDate.compareTo(fromDate) < 0) return false;
+              if (hasTo   && rowDate.compareTo(toDate)   > 0) return false;
+              return true;
+            }
+          });
+        }
 
-        if (!selDate.equals("All Dates"))
-          filters.add(RowFilter.regexFilter("(?i)^" + selDate + "$", 1));
         if (!selOState.equals("All Origins"))
           filters.add(RowFilter.regexFilter("(?i)^" + selOState + "$", 3));
         if (!selDState.equals("All Destinations"))
@@ -283,7 +303,8 @@ class Screen4 extends Screen {
     dStateFilter.addActionListener(filterAction);
     statusFilter.addActionListener(filterAction);
     delayFilter.addActionListener(filterAction);
-    dateFilter.addActionListener(filterAction);
+    dateFrom.addActionListener(filterAction);
+    dateTo.addActionListener(filterAction);
 
     // FILTER BAR
     JPanel filterPanel = new JPanel();
@@ -304,15 +325,22 @@ class Screen4 extends Screen {
     filterPanel.add(sLabel);
     filterPanel.add(statusFilter);
 
-    filterPanel.add(new JLabel("  Filter by Date:") {{
-      setForeground(new Color(255, 210, 50));
-    }});
-    filterPanel.add(dateFilter);
-
     JLabel delLabel = new JLabel("  Delay:");
     delLabel.setForeground(dropFg);
     filterPanel.add(delLabel);
     filterPanel.add(delayFilter);
+    
+    
+    JLabel dateLabel = new JLabel("  Date Range:");
+    dateLabel.setForeground(dropFg);
+    filterPanel.add(dateLabel);
+    dateFrom.setBackground(dropBg); dateFrom.setForeground(dropFg);
+    dateTo.setBackground(dropBg);   dateTo.setForeground(dropFg);
+    filterPanel.add(dateFrom);
+    JLabel toLabel = new JLabel(" to ");
+    toLabel.setForeground(dropFg);
+    filterPanel.add(toLabel);
+    filterPanel.add(dateTo);
 
     // LEGEND
     JPanel legendPanel = new JPanel();
@@ -352,7 +380,7 @@ class Screen4 extends Screen {
     return l;
   }
 
-  void draw() {
+    void draw() {
     super.draw();
 
     fill(darkMode ? color(255) : color(58, 140, 110));
