@@ -60,6 +60,9 @@ class Screen3 extends Screen {
     ArrayList<String> cityNames = new ArrayList<String>();
     ArrayList<Integer> counts   = new ArrayList<Integer>();
 
+    // 👉 decide mode: destination selected → switch to origin cities
+    boolean useOriginCities = (selectedDest > 0);
+
     for (int i = 0; i < datareader.cancelled.size(); i++) {
       String state  = datareader.originState.get(i);
       String origin = datareader.originAirport.get(i);
@@ -70,23 +73,33 @@ class Screen3 extends Screen {
 
       // apply filters
       if (selectedState  > 0 && !state.equals(allStates[selectedState]))       continue;
-      if (selectedStatus > 0 && !status.equals(statusOptions[selectedStatus]))  continue;
-      if (selectedOrigin > 0 && !origin.equals(allOrigins[selectedOrigin]))     continue;
-      if (selectedDest   > 0 && !dest.equals(allDests[selectedDest]))           continue;
+      if (selectedStatus > 0 && !status.equals(statusOptions[selectedStatus])) continue;
+      if (selectedOrigin > 0 && !origin.equals(allOrigins[selectedOrigin]))    continue;
+      if (selectedDest   > 0 && !dest.equals(allDests[selectedDest]))          continue;
 
       if (isCancelled) cancelled++;
       else onTime++;
 
-      // count destination cities
-      String city = datareader.destinationCity.get(i);
+      // 👉 SWITCH LOGIC HERE
+      String city;
+      if (useOriginCities) {
+        city = datareader.originCity.get(i);        // 🔁 origin cities
+      } else {
+        city = datareader.destinationCity.get(i);   // default
+      }
+
       int idx = cityNames.indexOf(city);
-      if (idx == -1) { cityNames.add(city); counts.add(1); }
-      else counts.set(idx, counts.get(idx) + 1);
+      if (idx == -1) { 
+        cityNames.add(city); 
+        counts.add(1); 
+      } else {
+        counts.set(idx, counts.get(idx) + 1);
+      }
     }
 
     // sort cities by count and keep top 8
     String[] tc = cityNames.toArray(new String[0]);
-    int[]    tn = new int[counts.size()];
+    int[] tn = new int[counts.size()];
     for (int i = 0; i < counts.size(); i++) tn[i] = counts.get(i);
 
     for (int i = 0; i < tn.length - 1; i++)
@@ -96,29 +109,35 @@ class Screen3 extends Screen {
           String ts = tc[j]; tc[j] = tc[j+1]; tc[j+1] = ts;
         }
 
-    int top   = min(8, tc.length);
+    int top = min(8, tc.length);
     topCities  = new String[top];
     cityCounts = new int[top];
-    for (int i = 0; i < top; i++) { topCities[i] = tc[i]; cityCounts[i] = tn[i]; }
+    for (int i = 0; i < top; i++) { 
+      topCities[i] = tc[i]; 
+      cityCounts[i] = tn[i]; 
+    }
   }
 
   // === draw ===
   void draw() {
     super.draw();
 
-    // chart titles
+    // 👉 dynamic title
+    boolean useOriginCities = (selectedDest > 0);
+    String chartTitle = useOriginCities ? "Top Origin Cities" : "Top Destination Cities";
+
     fill(darkMode ? color(255) : color(58, 140, 110));
     textSize(30);
     textAlign(CENTER, CENTER);
     text("Cancellations", width/4, 90);
-    text("Top Destination Cities", (width/4)*3, 90);
+    text(chartTitle, (width/4)*3, 90);
 
-    // divider line between the two halves
+    // divider
     stroke(darkMode ? color(80) : color(200));
     strokeWeight(1);
     line(width/2, 65, width/2, height - 30);
 
-    // pie chart — left half
+    // pie chart
     pieChart(
       width/4, height/2 + 20, 280,
       new String[]{ "Cancelled", "On time" },
@@ -126,24 +145,22 @@ class Screen3 extends Screen {
       new float[] { cancelled, onTime }
     );
 
-    // bar chart — right half
+    // bar chart
     barChart(width/2 + 40, 110, width - 30, height - 70, topCities, cityCounts);
 
-    // dropdowns drawn last so they appear on top of charts
     drawDropdowns();
   }
 
   // === dropdown rendering ===
   void drawDropdowns() {
     String[][] options = { allStates, statusOptions, allOrigins, allDests };
-    int[]   selected   = { selectedState, selectedStatus, selectedOrigin, selectedDest };
-    String[] labels    = { "State", "Status", "Origin", "Destination" };
+    int[] selected = { selectedState, selectedStatus, selectedOrigin, selectedDest };
+    String[] labels = { "State", "Status", "Origin", "Destination" };
 
     for (int d = 0; d < 4; d++) {
-      int x    = ddX[d];
+      int x = ddX[d];
       color bg = darkMode ? color(#3a8c6e) : color(#4a6fa5);
 
-      // main button
       noStroke();
       fill(bg);
       rect(x, ddY, ddW, ddH, 8);
@@ -155,25 +172,20 @@ class Screen3 extends Screen {
       if (label.length() > 21) label = label.substring(0, 19) + "..";
       text(label, x + 10, ddY + ddH/2);
 
-      // arrow indicator
       textAlign(RIGHT, CENTER);
       text(openDropdown == d ? "▲" : "▼", x + ddW - 8, ddY + ddH/2);
 
-      // open dropdown list
       if (openDropdown == d) {
         int offset = scrollOffset[d];
-        int end    = min(offset + maxVisible, options[d].length);
-        int listH  = (end - offset) * ddH;
+        int end = min(offset + maxVisible, options[d].length);
+        int listH = (end - offset) * ddH;
 
-        // list background
         fill(darkMode ? color(30, 35, 60) : color(245));
         rect(x, ddY + ddH, ddW, listH, 0, 0, 8, 8);
 
-        // items
         for (int j = offset; j < end; j++) {
           int itemY = ddY + ddH + (j - offset) * ddH;
 
-          // highlight selected item
           if (j == selected[d]) {
             noStroke();
             fill(color(#e07b54));
@@ -188,7 +200,6 @@ class Screen3 extends Screen {
           text(opt, x + 10, itemY + ddH/2);
         }
 
-        // scroll arrows if list is longer than maxVisible
         if (options[d].length > maxVisible) {
           fill(darkMode ? color(150) : color(100));
           textAlign(CENTER, CENTER);
@@ -209,19 +220,16 @@ class Screen3 extends Screen {
     for (int d = 0; d < 4; d++) {
       int x = ddX[d];
 
-      // click main button — toggle open/close
       if (mx > x && mx < x + ddW && my > ddY && my < ddY + ddH) {
         openDropdown = (openDropdown == d) ? -1 : d;
         return;
       }
 
-      // click inside open list
       if (openDropdown == d) {
         int offset = scrollOffset[d];
-        int end    = min(offset + maxVisible, options[d].length);
-        int listH  = (end - offset) * ddH;
+        int end = min(offset + maxVisible, options[d].length);
+        int listH = (end - offset) * ddH;
 
-        // scroll up arrow
         if (options[d].length > maxVisible && offset > 0 &&
             mx > x + ddW - 24 && mx < x + ddW &&
             my > ddY + ddH && my < ddY + ddH + 20) {
@@ -229,7 +237,6 @@ class Screen3 extends Screen {
           return;
         }
 
-        // scroll down arrow
         if (options[d].length > maxVisible && end < options[d].length &&
             mx > x + ddW - 24 && mx < x + ddW &&
             my > ddY + ddH + listH - 20 && my < ddY + ddH + listH) {
@@ -237,7 +244,6 @@ class Screen3 extends Screen {
           return;
         }
 
-        // select item
         for (int j = offset; j < end; j++) {
           int itemY = ddY + ddH + (j - offset) * ddH;
           if (mx > x && mx < x + ddW && my > itemY && my < itemY + ddH) {
@@ -253,7 +259,6 @@ class Screen3 extends Screen {
       }
     }
 
-    // click outside — close dropdown
     openDropdown = -1;
   }
 
