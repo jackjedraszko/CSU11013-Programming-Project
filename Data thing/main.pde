@@ -45,12 +45,13 @@ void draw() {
 
 // ==== Mouse Events ====
 void mousePressed() {
-
+  //logo
   if (mouseX > 20 && mouseX < 80 && mouseY > 10 && mouseY < 60) {
     currentScreen = screen1;
     return;
   }
 
+  //toggle
   int tx = width - 100;
   int ty = 30;
   if (mouseX > tx && 
@@ -64,18 +65,16 @@ void mousePressed() {
   if (currentScreen == screen1) {
     ((Screen1) currentScreen).checkFileButtons(mouseX, mouseY);
   }
-  if (currentScreen == screen3)
-  {
-    ((Screen3) currentScreen).clicked(mouseX, mouseY);
-    return;
-  }
-  if (currentScreen == screen4)
-  {
+  
+  if (currentScreen == screen4){
     ((Screen4) currentScreen).clicked(mouseX, mouseY);
     return;
   }
-  if (currentScreen == screen2)
-  {
+  if (currentScreen == screen3){
+    ((Screen3) currentScreen).clicked(mouseX, mouseY);
+    return;
+  }
+  if (currentScreen == screen2){
     ((Screen2) currentScreen).mousePressed();
   }
 
