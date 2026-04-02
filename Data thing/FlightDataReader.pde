@@ -21,8 +21,29 @@ class DataReader {
   ArrayList<String> diverted               = new ArrayList<>();
   ArrayList<String> distance               = new ArrayList<>();
 
-  String fileName = "flights.csv";
+  String fileName = "flights2k.csv";
   String line = "";
+
+  void clearData() {
+      flightDate.clear();
+      identityCode.clear();
+      flightNumber.clear();
+      originAirport.clear();
+      originCity.clear();
+      originState.clear();
+      originWorldArea.clear();
+      destinationAirport.clear();
+      destinationCity.clear();
+      destinationState.clear();
+      destinationWorldArea.clear();
+      scheduledDepartureTime.clear();
+      actualDepartureTime.clear();
+      scheduledArrivalTime.clear();
+      actualArrivalTime.clear();
+      cancelled.clear();
+      diverted.clear();
+      distance.clear();
+  }
 
   void sortData() {
     try {
