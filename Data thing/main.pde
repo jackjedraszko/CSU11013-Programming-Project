@@ -1,3 +1,5 @@
+//Main
+//imports & Global Variables
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -17,33 +19,33 @@ PImage logo;
 Table table;
 
 void setup() {
-  size(1300, 700);
-  textAlign(CENTER, CENTER);
+  size(1300, 700);   // Create 1300x700 pixel window
+  textAlign(CENTER, CENTER);   // Center text alignment by default
 
-  logo = loadImage("logo2.jpg");
+  logo = loadImage("logo2.jpg");   // Load logo image from file
 
-  table = new Table();
+  table = new Table();   //initialize custom Table object
 
-  datareader = new DataReader();
-  datareader.sortData();
-  println(datareader.originState.toString());
+  datareader = new DataReader();  //create DataReader instance
+  datareader.sortData();     // load data from CSV (misnamed method)
+  println(datareader.originState.toString());   // Debug: print origin states
 
-
+// Create all four screens
   screen1 = new Screen1(color(#f5f0eb), color(#f5f0eb));
   screen2 = new Screen2(color(#f5f0eb), color(#f5f0eb), datareader);
   screen3 = new Screen3(color(#f5f0eb), color(#f5f0eb));
   screen4 = new Screen4(color(#f5f0eb), color(#f5f0eb), datareader);
 
-  currentScreen = screen1;
+  currentScreen = screen1;  //start on main screen
 }
 
 
 void draw() {
-  currentScreen.draw();
+  currentScreen.draw();  //draw whatever screen is active
 }
 
 
-// ==== Mouse Events ====
+//Mouse Events
 void mousePressed() {
   //logo
   if (mouseX > 20 && mouseX < 80 && mouseY > 10 && mouseY < 60) {
@@ -52,14 +54,14 @@ void mousePressed() {
   }
 
   //toggle
-  int tx = width - 100;
-  int ty = 30;
+  int tx = width - 100;   //toggle x position
+  int ty = 30;  // Toggle Y position
   if (mouseX > tx && 
       mouseX < tx + 46 && 
       mouseY > ty && 
       mouseY < ty + 22) {
-    darkMode = !darkMode;
-    return;
+    darkMode = !darkMode;   //change to dark mode
+    return;  //exit after toggling
   }
 
   if (currentScreen == screen1) {
@@ -78,8 +80,10 @@ void mousePressed() {
     ((Screen2) currentScreen).mousePressed();
   }
 
+  // Check if any widget (button) was clicked
   Widget pressed = currentScreen.getEvent(mouseX, mouseY);
 
+ //switch to the different sceens
   if (pressed != null) {
     if (pressed.label.equals("Maps")) {
       currentScreen = screen2;
@@ -93,12 +97,14 @@ void mousePressed() {
   }
 }
 
+//Mouse Wheel Handler
 void mouseWheel(MouseEvent event) {
   if (currentScreen == screen3) {
     ((Screen3) currentScreen).scrolled(event.getCount());
   }
 }
 
+//mouse Moved Handler
 void mouseMoved() {
   currentScreen.moved(mouseX, mouseY);
 }
