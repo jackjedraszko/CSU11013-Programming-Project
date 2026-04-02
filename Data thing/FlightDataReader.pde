@@ -1,7 +1,7 @@
-// ==== DataReader Class ====
+// DataReader Class
 class DataReader {
 
-  // ArrayLists for each column in the CSV
+  // data storage - 18 ArrayLists for CSV columns
   ArrayList<String> flightDate             = new ArrayList<>();
   ArrayList<String> identityCode          = new ArrayList<>();
   ArrayList<String> flightNumber           = new ArrayList<>();
@@ -21,10 +21,10 @@ class DataReader {
   ArrayList<String> diverted               = new ArrayList<>();
   ArrayList<String> distance               = new ArrayList<>();
 
-  String fileName = "flights2k.csv";
+  String fileName = "flights2k.csv";    //CONSTANT fileName = "flights2k.csv"
   String line = "";
 
-  void clearData() {
+  void clearData() {                    // Clear all ArrayLists
       flightDate.clear();
       identityCode.clear();
       flightNumber.clear();
@@ -45,9 +45,10 @@ class DataReader {
       distance.clear();
   }
 
+// Load data from CSV file (misnamed as sortData)
   void sortData() {
     try {
-      BufferedReader bfrRdr = new BufferedReader(new FileReader(dataPath(fileName)));
+      BufferedReader bfrRdr = new BufferedReader(new FileReader(dataPath(fileName)));  //open BufferedReader for fileName
 
       bfrRdr.readLine(); // skip header row
 
@@ -56,6 +57,7 @@ class DataReader {
 
         if (values.length < 18) continue; // skip malformed rows
 
+        //Add each value to corresponding ArrayList
         flightDate.add(values[0]);
         identityCode.add(values[1]);
         flightNumber.add(values[2]);
@@ -78,6 +80,7 @@ class DataReader {
 
       bfrRdr.close();
     }
+    //catch exceptions
     catch (FileNotFoundException e) {
       println("File not found: " + e);
     }
@@ -86,6 +89,7 @@ class DataReader {
     }
   }
 
+ // Getter methods for each ArrayList
   ArrayList<String> getFlightDate()
   {
     return flightDate;
