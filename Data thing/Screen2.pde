@@ -77,20 +77,23 @@ class Screen2 extends Screen
   
     // ==== Draw connections or heatmap ====
     if (showConnections) {
-      int threshold = 50;
+      int threshold = max(1, (int)(maxConnections * 0.05));
   
       // Draw connections
       for (Connection c : connections) {
         if (c.count > threshold) {
           // Dark mode: white lines; Light mode: darker gray
-          stroke(darkMode ? color(255, 180) : color(50, 180));
+          stroke(darkMode ? color(255) : color(80));
           float normalized = (float)c.count / maxConnections;
           float thickness = 1 + normalized * 6;
           strokeWeight(thickness);
           line(mapX + c.a1.x, mapY + c.a1.y, mapX + c.a2.x, mapY + c.a2.y);
         }
       }
-  
+      
+      strokeWeight(1);
+      noStroke();
+
       // Draw airports on top
       for (Airport a : airports) {
         a.draw(mapX, mapY, false);
@@ -107,7 +110,7 @@ class Screen2 extends Screen
     float tableX = 30;
     float tableY = 100;
     float rowHeight = 30;
-    fill(darkMode ? 255 : 0);
+    fill(darkMode ? color(255) : color(58, 140, 110));
     textSize(20);
     textAlign(LEFT, CENTER);
   
@@ -118,7 +121,7 @@ class Screen2 extends Screen
       for (int i = 0; i < top10.size(); i++) {
         Connection c = top10.get(i);
         String label = (i + 1) + ". " + c.a1.code + " - " + c.a2.code + " : " + c.count;
-        text(label, tableX, tableY + i * rowHeight + 90);
+        text(label, tableX, tableY + i * rowHeight + 100);
       }
     } else {
       text("Top 10 Airports:", tableX, tableY - rowHeight + 80);
@@ -126,7 +129,7 @@ class Screen2 extends Screen
       for (int i = 0; i < topAirports.size(); i++) {
         Airport a = topAirports.get(i);
         String label = (i + 1) + ". " + a.code + "  " + a.traffic + " flights";
-        text(label, tableX, tableY + i * rowHeight + 90);
+        text(label, tableX, tableY + i * rowHeight + 100);
       }
     }
   
