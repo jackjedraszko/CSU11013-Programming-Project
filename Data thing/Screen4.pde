@@ -364,10 +364,10 @@ class Screen4 extends Screen {
     textSize(18);
     text("Click the button below to open the flight table", width/2, height/2);
 
-    fill(color(25, 28, 55));
+    fill(darkMode ? color(#3a8c6e) : color(#4a6fa5));
     noStroke();
     rect(width/2 - 100, height/2 + 40, 200, 50, 10);
-    fill(color(255, 210, 50));
+    fill(color(255));
     textSize(16);
     text("Open Table", width/2, height/2 + 65);
   }
