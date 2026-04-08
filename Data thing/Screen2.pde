@@ -15,13 +15,13 @@ class Screen2 extends Screen
   int tableDarkColor = 255;
   int tableFontSize = 20;
 
-  ArrayList<Airport> airports = new ArrayList<Airport>();
-  Airport hooveredAirport = null;
+  ArrayList<Airport> airports = new ArrayList<Airport>(); // stores all airports
+  Airport hooveredAirport = null; // currently hovered airport
   DataReader dr;
-  boolean showConnections = false;
-  ArrayList<Connection> connections = new ArrayList<Connection>();
+  boolean showConnections = false; // toggle between heatmap and connections
+  ArrayList<Connection> connections = new ArrayList<Connection>(); // flight routes
   float maxConnections = 1;
-  ArrayList<Airport> topAirports = new ArrayList<Airport>();
+  ArrayList<Airport> topAirports = new ArrayList<Airport>(); // top 10 airports
   Widget toggleMapButton;
   Screen2(color bgColor, color btnColor, DataReader dr)
   {
@@ -39,10 +39,9 @@ class Screen2 extends Screen
 
     for (Widget w : widgets)
     {
-      w.hoverable = true;
+      w.hoverable = true; // enable hovering
     }
-    toggleMapButton = new Widget(width - 220, height - 70, 200, 40,
-    "Show Connections", btnColor);
+    toggleMapButton = new Widget(width - 220, height - 70, 200, 40, "Show Connections", btnColor);
     widgets.add(toggleMapButton);
   }
 
@@ -53,13 +52,11 @@ class Screen2 extends Screen
     float mapX = width/2 - 430;
     float mapY = height/2 - 250;
   
-    // ==== Draw map ====
     if (USmap != null) {
-      image(USmap, mapX, mapY, 900, 540);
+      image(USmap, mapX, mapY, 900, 540); // draw map
     }
   
-    // ==== Detect hovered airport ====
-    hooveredAirport = null;
+    hooveredAirport = null; // detect hovered airport
     float closestDist = 999999;
     float hooverRadius = 40;
   
@@ -69,17 +66,17 @@ class Screen2 extends Screen
   
       float d = dist(mouseX, mouseY, screenX, screenY);
   
+      // measure distance form mouse
       if (d < closestDist && d < hooverRadius) {
         closestDist = d;
         hooveredAirport = a;
       }
     }
   
-    // ==== Draw connections or heatmap ====
+    // Draw connections
     if (showConnections) {
       int threshold = max(1, (int)(maxConnections * 0.05));
   
-      // Draw connections
       for (Connection c : connections) {
         if (c.count > threshold) {
           // Dark mode: white lines; Light mode: darker gray
@@ -106,7 +103,7 @@ class Screen2 extends Screen
       }
     }
   
-    // ==== Draw top 10 table ====
+    // Draw top 10 table
     float tableX = 30;
     float tableY = 100;
     float rowHeight = 30;
@@ -133,7 +130,7 @@ class Screen2 extends Screen
       }
     }
   
-    // ==== Draw title ====
+    // Draw title
     fill(darkMode ? color(255) : color(58, 140, 110));
     textSize(60);
     textAlign(CENTER, CENTER);
@@ -141,7 +138,7 @@ class Screen2 extends Screen
     String title = showConnections ? "Airport Connections Map" : "Airports Heatmap";
     text(title, width/2, 35);
   
-    // ==== Show hovered airport info for heatmap ====
+    // Show hovered airport information
     if (!showConnections && hooveredAirport != null) {
       fill(darkMode ? color(255) : color(58, 140, 110));
       textSize(30);
@@ -159,6 +156,8 @@ class Screen2 extends Screen
   }
   return topN;
   }
+  
+  // find the max traffic value
   void calculateMaxTraffic()
   {
     maxTraffic = 1;
@@ -171,6 +170,8 @@ class Screen2 extends Screen
       }
     }
   }
+  
+  // create a connection between two airports
   void calculateConnections()
   {
     ArrayList<String> origins = dr.originAirport;
@@ -228,6 +229,7 @@ class Screen2 extends Screen
         maxConnections = c.count;
     }
   }
+  
   void mousePressed()
   {
     if (mouseX > toggleMapButton.x &&
@@ -239,6 +241,7 @@ class Screen2 extends Screen
       toggleMapButton.label = showConnections ? "Hide Connections" : "Show Connections";
     }
   }
+  
   class Airport
   {
     String code;
@@ -253,6 +256,7 @@ class Screen2 extends Screen
       this.traffic = 0;
     }
   
+    // draw airports as heatmap bubble
     void draw(float mapX, float mapY, boolean hovered)
     {
       float normalized = log(traffic + 1) / log(maxTraffic + 1);
@@ -285,6 +289,7 @@ class Screen2 extends Screen
     }
   }
    
+  // create all airport objects with fixed scaled positions on the map
   void setupAirports()
   {
     airports.add(new Airport("JFK", 794, 180));
@@ -345,6 +350,7 @@ class Screen2 extends Screen
     airports.add(new Airport("TPA", 698, 455));
     }
   
+  // count totatl traffic per airport
   void calculateTraffic()
   {
     for (String originCode : dr.getOriginAirport())
@@ -373,6 +379,8 @@ class Screen2 extends Screen
       }
     }
   }
+  
+  // find top 10 busiest airprots
   void calculateTopAirports()
   {
     ArrayList<Airport> sortedAirports = new ArrayList<Airport>(airports);
@@ -386,6 +394,7 @@ class Screen2 extends Screen
         topAirports.add(sortedAirports.get(i));
     }
   }
+  
   class Connection
   {
       Airport a1;
@@ -399,6 +408,7 @@ class Screen2 extends Screen
         this.count = 1;
       }
     
+      // draw connection line
       void draw(float mapX, float mapY)
       {
         float normalized = (float)count / maxConnections;
