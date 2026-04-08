@@ -83,7 +83,7 @@ class Screen2 extends Screen
       for (Connection c : connections) {
         if (c.count > threshold) {
           // Dark mode: white lines; Light mode: darker gray
-          stroke(darkMode ? color(255) : color(80));
+          stroke(darkMode ? color(255) : color(67));
           float normalized = (float)c.count / maxConnections;
           float thickness = 1 + normalized * 6;
           strokeWeight(thickness);
