@@ -6,6 +6,8 @@ class Screen3 extends Screen
   String[] topCities;
   int[] cityCounts;
   String[] allStates, allOrigins, allDests;
+  
+  // dropdown options
   String[] statusOptions = {"All Statuses", "ON TIME", "CANCELLED"};
   String[] chartTypeOptions =
   {
@@ -15,6 +17,8 @@ class Screen3 extends Screen
     "Arr Time",
     "Distance"
   };
+  
+  // selected filter values
   int selectedState = 0, selectedStatus = 0, selectedOrigin = 0, selectedDest = 0;
   int selectedChartType = 0;
   int openDropdown  = -1;
@@ -52,7 +56,8 @@ class Screen3 extends Screen
     for (String s : set) arr[i++] = s;
     return arr;
   }
-
+  
+  // group time into buckets
   String getTimeBucket(String time)
   {
     if (time == null || time.length() < 2) return "Unknown";
@@ -72,6 +77,7 @@ class Screen3 extends Screen
     }
   }
 
+  // group distance into ranges
   String getDistanceBucket(String distStr)
   {
     try
@@ -117,6 +123,8 @@ class Screen3 extends Screen
       {
         onTime++;
       }
+      
+      // determine cateogry for bar chart
       String key;
       switch (selectedChartType)
       {
@@ -215,6 +223,8 @@ class Screen3 extends Screen
         tn[i] = orderedCounts.get(i);
       }
     }
+    
+    // select top 8 results
     int top = min(8, tc.length);
     topCities  = new String[top];
     cityCounts = new int[top];
@@ -228,6 +238,8 @@ class Screen3 extends Screen
   void draw()
   {
     super.draw();
+    
+    // determine chart title
     String chartTitle;
     switch (selectedChartType)
     {
@@ -312,6 +324,7 @@ class Screen3 extends Screen
     }
   }
 
+  // handle mouse clicks
   void clicked(int mx, int my)
   {
     String[][] options = { allStates, statusOptions, allOrigins, allDests, chartTypeOptions };
@@ -348,6 +361,7 @@ class Screen3 extends Screen
     openDropdown = -1;
   }
 
+  // handle scrolling inside dropdown
   void scrolled(int delta)
   {
     if (openDropdown == -1) return;
