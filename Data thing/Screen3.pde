@@ -1,4 +1,5 @@
 // ==== Screen3: Charts ====
+// Ines added charts class 25.03.26 9 am
 class Screen3 extends Screen
 {
   color btnColor;
@@ -35,6 +36,7 @@ class Screen3 extends Screen
     recompute();
   }
 
+  // Jacek (Jack) added filters 01.04.26 10 am
   void buildFilterArrays()
   {
     java.util.TreeSet<String> stateSet  = new java.util.TreeSet<String>();
@@ -96,6 +98,7 @@ class Screen3 extends Screen
     }
   }
 
+  // Kira added recomputing 25.03.26 10 am
   void recompute()
   {
     cancelled = 0;
