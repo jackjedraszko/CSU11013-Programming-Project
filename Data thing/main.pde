@@ -45,7 +45,7 @@ void draw() {
 }
 
 
-//Mouse Events
+// Ines and Jacek (Jack) added mouse Events and wdiget handling 25.03.26 12 pm
 void mousePressed() {
   //logo
   if (mouseX > 20 && mouseX < 80 && mouseY > 10 && mouseY < 60) {
