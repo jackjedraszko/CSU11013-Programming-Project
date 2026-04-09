@@ -1,4 +1,4 @@
-// Screen Base Class
+// Kira introduced Screen Base Class 19.03.26 9 am
 class Screen {
   ArrayList<Widget> widgets;  // List of buttons on this screen
   color bgColor;
@@ -31,7 +31,7 @@ class Screen {
 
   void draw() {
     
-//Theme changer, change if dark mode
+// Kira introduced theme changer, change if dark mode 25.03.26 10 am
     if (darkMode){
       bgColor = color(#1a1f2e);
       btnColor = color(#3a8c6e);
@@ -86,7 +86,7 @@ class Screen {
 }
 
 
-//Widget Class
+// Kira added Widget Class 19.03.26 11 am
 class Widget {
   int x, y, w, h;    //position and size
   String label;     //button next
