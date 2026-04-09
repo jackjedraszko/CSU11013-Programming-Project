@@ -1,4 +1,5 @@
 //Screen1 Main
+// Kira added main screen class 19.03.26 9 am
 class Screen1 extends Screen {
   color btnColor;
   String[] fileNames  = { "flights2k.csv", "flights10k.csv", "flights100k.csv", "flights_full.csv" };
@@ -8,7 +9,7 @@ class Screen1 extends Screen {
     super(bgColor);  // Call parent constructor to set background color
     this.btnColor = btnColor;
     
-    // Create three main navigation buttons
+    // Ines and Jacek (Jack) created three main navigation buttons 25.03.26 11 am
     addWidget(new Widget(100, height/2, 300, 150, "Maps",   btnColor));
     addWidget(new Widget(width/2-150, height/2, 300, 150, "Charts", btnColor));
     addWidget(new Widget(width-400,   height/2, 300, 150, "Tables", btnColor));
