@@ -1,5 +1,5 @@
 // ==== Screen2 Maps ====
-
+// Jacek (Jack) added Maps class 19.03.26 9 am
 
 class Screen2 extends Screen
 {
@@ -171,7 +171,7 @@ class Screen2 extends Screen
     }
   }
   
-  // create a connection between two airports
+  // Jacek (Jack) created a connection between two airports; 25.03.26 10 am
   void calculateConnections()
   {
     ArrayList<String> origins = dr.originAirport;
@@ -242,6 +242,7 @@ class Screen2 extends Screen
     }
   }
   
+  // Jacek (Jack) introduced class Airport 19.03.26 10 am
   class Airport
   {
     String code;
@@ -289,7 +290,7 @@ class Screen2 extends Screen
     }
   }
    
-  // create all airport objects with fixed scaled positions on the map
+  // Jacek (Jack) created all airport objects with fixed scaled positions on the map 19.03.26 10 am
   void setupAirports()
   {
     airports.add(new Airport("JFK", 794, 180));
@@ -350,7 +351,7 @@ class Screen2 extends Screen
     airports.add(new Airport("TPA", 698, 455));
     }
   
-  // count totatl traffic per airport
+  // Jacek (Jack) introduced counting totatl traffic per airport 19.03.26 11 am
   void calculateTraffic()
   {
     for (String originCode : dr.getOriginAirport())
@@ -380,7 +381,7 @@ class Screen2 extends Screen
     }
   }
   
-  // find top 10 busiest airprots
+  // Jacek (Jack) introduced finding top 10 busiest airprots 26.03.26 11 am
   void calculateTopAirports()
   {
     ArrayList<Airport> sortedAirports = new ArrayList<Airport>(airports);
@@ -395,6 +396,7 @@ class Screen2 extends Screen
     }
   }
   
+  // Jacek (Jack) introduced class Connection 25.03.26 10 am
   class Connection
   {
       Airport a1;
