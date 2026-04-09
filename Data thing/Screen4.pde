@@ -1,4 +1,5 @@
 // ==== Screen4: Tables ====
+// Lauren added table class 25.03.26 9 am
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
